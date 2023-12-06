@@ -26,6 +26,10 @@ public class Book {
         this.user = user;
         this.bookDetail = bookDetail;
     }
+    public Book(Long id) {
+        this.id = id;
+    }
+
 
     public Long getId() {
         return id;

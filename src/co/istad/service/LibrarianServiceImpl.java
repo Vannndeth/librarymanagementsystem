@@ -85,12 +85,12 @@ public class LibrarianServiceImpl implements LibrarianService{
     }
 
     @Override
-    public Optional<Book> searchBookByAuthor(String author) {
+    public Optional<List<Book>> searchBookByAuthor(String author) {
         return Optional.empty();
     }
 
     @Override
-    public List<Book> searchBookByCategory(String category) {
+    public Optional<List<Book>> searchBookByCategory(String category) {
         return null;
     }
 

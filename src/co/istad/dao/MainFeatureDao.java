@@ -13,6 +13,7 @@ import java.util.Optional;
 
 public interface MainFeatureDao {
     public static User login(User user, Connection connection){
+        User userRepo = new User();
         String query = """
                     SELECT u.*, r.name as role_name, r.id as role_id FROM users u
                         INNER JOIN roles r
@@ -32,11 +33,12 @@ public interface MainFeatureDao {
 //                user.setEmail( rs.getString("email") );
                 user.setId(rs.getLong("id") );
                 user.setRole( role );
+                userRepo = user;
             }
         } catch (SQLException e) {
             throw new RuntimeException(e);
         }
-        return user;
+        return userRepo;
     }
     public static User create(User user, Connection connection){
         String query = """
@@ -61,8 +63,8 @@ public interface MainFeatureDao {
     }
     public Optional<Book> searchBookById (Long id);
     public Optional<Book> searchBookByTitle (String title);
-    public Optional<Book> searchBookByAuthor (String author);
-    public List<Book> searchBookByCategory (String category);
+    public Optional<List<Book>> searchBookByAuthor (String author);
+    public Optional<List<Book>> searchBookByCategory (String category);
     public List<Book> getAllBook();
     public Optional<User> searchUserById(Long id);
     public Optional<User> searchUserByUsername(String username);

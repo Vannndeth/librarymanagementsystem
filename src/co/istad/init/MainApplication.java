@@ -37,9 +37,6 @@ public class MainApplication {
             switch (option){
                 case 1 -> {
                     loginController.login();
-                    if( storage.getRole().getRole().name() == "ADMIN" ){
-                        System.out.println("Admin Dashboard");
-                    }
                 }
                 case 2 -> {
                     signupController.signup();

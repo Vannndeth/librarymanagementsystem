@@ -9,8 +9,8 @@ import java.util.Optional;
 public interface MainFeatureService {
     public Optional<Book> searchBookById (Long id);
     public Optional<Book> searchBookByTitle (String title);
-    public Optional<Book> searchBookByAuthor (String author);
-    public List<Book> searchBookByCategory (String category);
+    public Optional<List<Book>> searchBookByAuthor (String author);
+    public Optional<List<Book>> searchBookByCategory (String category);
     public List<Book> getAllBook();
     public Optional<User> searchUserById(Long id);
     public Optional<User> searchUserByUsername(String username);
