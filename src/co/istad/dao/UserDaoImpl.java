@@ -1,6 +1,7 @@
 package co.istad.dao;
 
 import co.istad.model.Book;
+import co.istad.model.Borrow;
 import co.istad.model.User;
 
 import java.util.List;
@@ -54,11 +55,6 @@ public class UserDaoImpl implements UserDao {
     }
 
     @Override
-    public Book getByTitle(String title) {
-        return null;
-    }
-
-    @Override
     public User update(Long id, User user) {
         return null;
     }
@@ -70,6 +66,21 @@ public class UserDaoImpl implements UserDao {
 
     @Override
     public User deleteById(Long id) {
+        return null;
+    }
+
+    @Override
+    public Book previewBookById(Long id) {
+        return null;
+    }
+
+    @Override
+    public Borrow borrowBook(Long id) {
+        return null;
+    }
+
+    @Override
+    public List<Borrow> bookHistory() {
         return null;
     }
 }

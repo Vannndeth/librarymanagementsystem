@@ -11,11 +11,12 @@ public class Book {
     private LocalDate createdDate;
     private Author author;
     private User user;
+    private BookDetail bookDetail;
 
     public Book() {
     }
 
-    public Book(Long id, String title, Integer quantity, String description, LocalDate createdDate, Author author, User user) {
+    public Book(Long id, String title, Integer quantity, String description, LocalDate createdDate, Author author, User user, BookDetail bookDetail) {
         this.id = id;
         this.title = title;
         this.quantity = quantity;
@@ -23,6 +24,7 @@ public class Book {
         this.createdDate = createdDate;
         this.author = author;
         this.user = user;
+        this.bookDetail = bookDetail;
     }
 
     public Long getId() {
@@ -81,16 +83,24 @@ public class Book {
         this.user = user;
     }
 
+    public BookDetail getBookDetail() {
+        return bookDetail;
+    }
+
+    public void setBookDetail(BookDetail bookDetail) {
+        this.bookDetail = bookDetail;
+    }
+
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
         if (!(o instanceof Book book)) return false;
-        return getId().equals(book.getId()) && getTitle().equals(book.getTitle()) && getQuantity().equals(book.getQuantity()) && getDescription().equals(book.getDescription()) && getCreatedDate().equals(book.getCreatedDate()) && getAuthor().equals(book.getAuthor()) && getUser().equals(book.getUser());
+        return getId().equals(book.getId()) && getTitle().equals(book.getTitle()) && getQuantity().equals(book.getQuantity()) && getDescription().equals(book.getDescription()) && getCreatedDate().equals(book.getCreatedDate()) && getAuthor().equals(book.getAuthor()) && getUser().equals(book.getUser()) && getBookDetail().equals(book.getBookDetail());
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(getId(), getTitle(), getQuantity(), getDescription(), getCreatedDate(), getAuthor(), getUser());
+        return Objects.hash(getId(), getTitle(), getQuantity(), getDescription(), getCreatedDate(), getAuthor(), getUser(), getBookDetail());
     }
 
     @Override
@@ -103,6 +113,7 @@ public class Book {
                 ", createdDate=" + createdDate +
                 ", author=" + author +
                 ", user=" + user +
+                ", bookDetail=" + bookDetail +
                 '}';
     }
 }
