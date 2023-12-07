@@ -56,9 +56,9 @@ public class AdminDaoImpl implements AdminDao {
     }
 
     @Override
-    public Long getLibrariansCount() {
+    public Long getLibrarianCount() {
         String query = """
-                    SELECT COUNT(*) FROM user WHERE role_id = 2
+                    SELECT COUNT(*) FROM users WHERE role_id = 2
                 """;
         return getCount(query);
     }
@@ -107,7 +107,7 @@ public class AdminDaoImpl implements AdminDao {
     }
 
     @Override
-    public List<User> getAllLibrarians() {
+    public List<User> getAllLibrarian() {
         List<User> userResponse = new ArrayList<>();
         String query = """
                     SELECT * FROM user WHERE role = LIBRARIAN

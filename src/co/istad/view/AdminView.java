@@ -1,6 +1,7 @@
 package co.istad.view;
 
 import org.nocrala.tools.texttablefmt.BorderStyle;
+import org.nocrala.tools.texttablefmt.CellStyle;
 import org.nocrala.tools.texttablefmt.ShownBorders;
 import org.nocrala.tools.texttablefmt.Table;
 
@@ -29,5 +30,12 @@ public class AdminView {
             System.err.println("Only number required!");
         }
         return option;
+    }
+
+    public void allUserView(Long adminCount, String msg){
+        Table table = new Table(1, BorderStyle.UNICODE_BOX_DOUBLE_BORDER_WIDE, ShownBorders.ALL);
+        table.addCell(msg);
+        table.addCell(adminCount.toString(), new CellStyle(CellStyle.HorizontalAlign.CENTER));
+        System.out.println(table.render());
     }
 }

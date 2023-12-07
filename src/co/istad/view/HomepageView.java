@@ -25,13 +25,17 @@ public class HomepageView {
         System.out.println("WELCOME TO CSTAD LIBRARY\n");
     }
     public int registerOption(Scanner scanner){
-        int option;
-        Table table = new Table(10, BorderStyle.UNICODE_BOX_DOUBLE_BORDER_WIDE, ShownBorders.ALL);
-        table.addCell("1) Sign in", 5);
-        table.addCell("2) Sign up",5);
-        System.out.println(table.render());
-        System.out.print("Please choose option: ");
-        option = Integer.parseInt(scanner.nextLine());
+        int option = 0;
+        try {
+            Table table = new Table(10, BorderStyle.UNICODE_BOX_DOUBLE_BORDER_WIDE, ShownBorders.ALL);
+            table.addCell("1) Sign in", 5);
+            table.addCell("2) Sign up", 5);
+            System.out.println(table.render());
+            System.out.print("Please choose option: ");
+            option = Integer.parseInt(scanner.nextLine());
+        }catch (NumberFormatException e){
+            HelperView.message("Please choose option above...!");
+        }
         return option;
     }
     public void login(User user, Scanner scanner){

@@ -35,8 +35,8 @@ public class AdminServiceImpl implements AdminService{
     }
 
     @Override
-    public Long getLibrariansCount() {
-        return null;
+    public Long getLibrarianCount() {
+        return adminDao.getLibrarianCount();
     }
 
     @Override
@@ -55,7 +55,7 @@ public class AdminServiceImpl implements AdminService{
     }
 
     @Override
-    public List<User> getAllLibrarians() {
+    public List<User> getAllLibrarian() {
         return null;
     }
 

@@ -9,11 +9,11 @@ public interface AdminDao extends MainFeatureDao {
     public void restore();
     public Long getUserCount();
     public Long getAdminCount();
-    public Long getLibrariansCount();
+    public Long getLibrarianCount();
     public Long getBooksCount();
     public List<User> getAllUser ();
     public List<User> getAllAdmin ();
-    public List<User> getAllLibrarians ();
+    public List<User> getAllLibrarian();
     public void getReport();
     public void resetPassword();
     public void disableAccount();

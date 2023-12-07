@@ -4,10 +4,8 @@ import co.istad.model.User;
 import co.istad.service.AdminService;
 import co.istad.service.LoginService;
 import co.istad.storage.Storage;
-import co.istad.util.RoleEnum;
 import co.istad.util.Singleton;
 import co.istad.view.AdminView;
-import co.istad.view.HelperView;
 import co.istad.view.HomepageView;
 
 import java.util.Scanner;
@@ -79,11 +77,15 @@ public class AdminController {
             switch (option) {
                 case 1 -> {
                     Long adminCount = adminService.getAdminCount();
-                    System.out.println(adminCount);
+                    adminView.allUserView(adminCount, "Total Admin");
                 }
                 case 2 -> {
                     Long userCount = adminService.getUserCount();
-                    System.out.println(userCount);
+                    adminView.allUserView(userCount,"Total User");
+                }
+                case 3 -> {
+                    Long librarianCount = adminService.getLibrarianCount();
+                    adminView.allUserView(librarianCount, "Total Librarian");
                 }
                 default -> {
                     storage.setId(null);
