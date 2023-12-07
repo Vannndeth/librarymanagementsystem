@@ -1,12 +1,10 @@
 package co.istad.connection;
-
 import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.SQLException;
-
 public class ConnectionDb {
-    private static String username = "postgres";
-    private static String password = "root101001";
+    private static String username = "cstadadmin";
+    private static String password = "ctad@2023";
     private static Connection connection;
 
     public static Connection getConnection(){
@@ -17,7 +15,7 @@ public class ConnectionDb {
                 } catch (ClassNotFoundException e) {
                     throw new RuntimeException(e);
                 }
-                connection = DriverManager.getConnection("jdbc:postgresql://localhost:5432/dblibrarycstad", username, password);
+                connection = DriverManager.getConnection("jdbc:postgresql://library.anuznomii.lol:5440/dbcstadlibrary", username, password);
             } catch (SQLException e) {
                 throw new RuntimeException(e);
             }

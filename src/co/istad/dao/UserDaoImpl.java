@@ -20,8 +20,6 @@ public class UserDaoImpl implements UserDao {
         storage = Singleton.getStorage();
         connection = ConnectionDb.getConnection();
     }
-
-
     @Override
     public Optional<Book> searchBookById(Long id) {
         Book bookRes = new Book();

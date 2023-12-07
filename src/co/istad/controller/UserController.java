@@ -50,76 +50,66 @@ public class UserController {
             int option = userView.userDashboardView(scanner);
             switch (option) {
                 case 1 -> {
-                    int searchOption = userView.searchOption(scanner);
+                    int searchOption = userView.viewSearchOption(scanner);
                     switch (searchOption) {
                         case 1 -> {
-                            System.out.print("Please Enter Book ID : ");
-                            long userInput = Long.parseLong(scanner.nextLine());
-                            Singleton.getUserServiceImpl().searchBookById(userInput);
+                            do {
+                                System.out.print("Please Enter Book ID : ");
+                                try {
+                                    long userInput = Long.parseLong(scanner.nextLine());
+                                    userView.viewSearchBookById(userService.searchBookById(userInput));
+                                    break;
+                                } catch (NumberFormatException e) {
+                                    System.out.println("Require Only Number");
+                                }
+                            } while (true);
                         }
                         case 2 -> {
-                            System.out.print("Please Enter Book Title : ");
-                            String userInput = scanner.nextLine();
-                            Singleton.getUserServiceImpl().searchBookByTitle(userInput);
+                                System.out.print("Please Enter Book Title : ");
+                                String userInput = scanner.nextLine();
+                                userView.viewSearchBookByTitle(userService.searchBookByTitle(userInput));
                         }
                         case 3 -> {
                             System.out.print("Please Enter Author Name: ");
                             String userInput = scanner.nextLine();
-                            Singleton.getUserServiceImpl().searchBookByAuthor(userInput);
+                             userView.viewSearchBookByAuhtor(userService.searchBookByAuthor(userInput));
                         }
                         case 4 -> {
                             System.out.print("Please Enter Category Type: ");
                             String userInput = scanner.nextLine();
-                            Singleton.getUserServiceImpl().searchBookByCategory(userInput);
+                            userView.viewSearchBookByCategory(userService.searchBookByCategory(userInput));
                         }
                         default -> throw new IllegalStateException();
                     }
                 }
                 case 2 -> {
                     Book[] books = new Book[3];
-                    System.out.println("Book Borrow Limit: 3");
                     int bookIndex = 0;
-                    while (true) {
-                        System.out.print("Enter Book ID to borrow: ");
-                        Long bookId = Long.parseLong(scanner.nextLine());
-                        System.out.print("Book ID: " + bookId + ". Confirm borrowing? (Y/N): ");
-                        String userInput = scanner.nextLine();
-                        if (userInput.equalsIgnoreCase("Y")) {
-                            books[bookIndex++] = new Book(bookId);
-                            Singleton.getUserServiceImpl().borrowBook(bookId);
-                            System.out.println("Book added to your borrowed books.");
-                            if (bookIndex < books.length) {
-                                System.out.print("Borrow another book? (Y/N): ");
-                                userInput = scanner.nextLine();
-                                if (!userInput.equalsIgnoreCase("Y")) {
-                                    break;
-                                }
-                            } else {
-                                System.out.println("You have reached the maximum borrow limit of 3 books.");
-                                break;
-                            }
-                        } else {
-                            System.out.println("Invalid input. Please enter Y or N.");
-                        }
-                    }
-
-                    System.out.println("Borrowing completed.");
-                    System.out.println("Borrowed books:");
-                    System.out.println("Waiting For Confirm");
-                    for (Book book : books) {
-                        if (book != null) {
-                            System.out.println("Book ID: " + book.getId());
-                        }
-                    }
+                   do {
+                     try{
+                         System.out.println("Book Borrow Limit: 3");
+                         userView.viewBorrowBook(scanner , bookIndex, books);
+                         break ;
+                     }catch (NumberFormatException e) {
+                         System.out.println("Require Only Number");
+                     }
+                   } while (true);
                 }
-                case 3 -> Singleton.getUserServiceImpl().getAllBook();
+                case 3 -> userView.viewAllBook(userService.getAllBook());
                 case 4 -> {
-                    System.out.print("Enter Book ID To Preview : ");
-                    long id = Long.parseLong(scanner.nextLine());
-                    Singleton.getUserServiceImpl().previewBookById(id);
+                    do {
+                        System.out.print("Enter Book ID To Preview : ");
+                        try{
+                            long id = Long.parseLong(scanner.nextLine());
+                            userView.viewPreviewBook(userService.previewBookById(id));
+                            break ;
+                        }catch (NumberFormatException e) {
+                            System.out.println("Require Only Number");
+                        }
+                    } while (true);
                 }
                 case 5 -> {
-                    Singleton.getUserServiceImpl().bookHistory();
+                    userView.viewBookHistory(userService.bookHistory());
                 }
                 case 6 -> {
                     storage.setId(null);

@@ -37,7 +37,7 @@ public class AdminView {
     public void allUserView(Long adminCount, String msg){
         Table table = new Table(1, BorderStyle.UNICODE_BOX_DOUBLE_BORDER_WIDE, ShownBorders.ALL);
         table.addCell(msg);
-        table.addCell(adminCount.toString(), new CellStyle(CellStyle.HorizontalAlign.CENTER));
+        table.addCell(adminCount.toString(), new CellStyle(CellStyle.HorizontalAlign.center));
         System.out.println(table.render());
     }
 
