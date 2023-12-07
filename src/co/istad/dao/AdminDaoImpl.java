@@ -76,7 +76,7 @@ public class AdminDaoImpl implements AdminDao {
     public List<User> getAllUser() {
         List<User> userResponse = new ArrayList<>();
         String query = """
-                    SELECT * FROM user WHERE role_id = 2
+                    SELECT * FROM users WHERE role_id = 2
                 """;
         return getUsers(userResponse, query);
     }
@@ -85,7 +85,7 @@ public class AdminDaoImpl implements AdminDao {
     public List<User> getAllAdmin() {
         List<User> userResponse = new ArrayList<>();
         String query = """
-                    SELECT * FROM user WHERE role_id = 1
+                    SELECT * FROM users WHERE role_id = 1
                 """;
         return getUsers(userResponse, query);
     }
@@ -110,7 +110,7 @@ public class AdminDaoImpl implements AdminDao {
     public List<User> getAllLibrarian() {
         List<User> userResponse = new ArrayList<>();
         String query = """
-                    SELECT * FROM user WHERE role = LIBRARIAN
+                    SELECT * FROM users WHERE role = LIBRARIAN
                 """;
         return getUsers(userResponse, query);
     }

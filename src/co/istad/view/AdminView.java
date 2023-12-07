@@ -1,10 +1,12 @@
 package co.istad.view;
 
+import co.istad.model.Book;
 import org.nocrala.tools.texttablefmt.BorderStyle;
 import org.nocrala.tools.texttablefmt.CellStyle;
 import org.nocrala.tools.texttablefmt.ShownBorders;
 import org.nocrala.tools.texttablefmt.Table;
 
+import java.util.List;
 import java.util.Scanner;
 
 public class AdminView {
@@ -36,6 +38,28 @@ public class AdminView {
         Table table = new Table(1, BorderStyle.UNICODE_BOX_DOUBLE_BORDER_WIDE, ShownBorders.ALL);
         table.addCell(msg);
         table.addCell(adminCount.toString(), new CellStyle(CellStyle.HorizontalAlign.CENTER));
+        System.out.println(table.render());
+    }
+
+    public void dashboardOverview(){
+        Table table = new Table(4, BorderStyle.UNICODE_BOX_DOUBLE_BORDER_WIDE, ShownBorders.ALL);
+        table.addCell("ADMIN");
+        table.addCell("LIBRARIAN");
+        table.addCell("USER");
+        table.addCell("BOOK");
+        System.out.println(table.render());
+    }
+
+    public void bookView(List<Book> books){
+        Table table = new Table(3, BorderStyle.UNICODE_BOX_DOUBLE_BORDER_WIDE, ShownBorders.ALL);
+        table.addCell("Id");
+        table.addCell("Title");
+        table.addCell("Quantity");
+        books.forEach(book -> {
+            table.addCell(book.getId().toString());
+            table.addCell(book.getTitle().toString());
+            table.addCell(book.getQuantity().toString());
+        });
         System.out.println(table.render());
     }
 }

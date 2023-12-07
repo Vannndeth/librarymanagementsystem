@@ -7,22 +7,6 @@ import org.nocrala.tools.texttablefmt.Table;
 import java.util.Scanner;
 
 public class UserView {
-//    public static void login(User user, Scanner scanner){
-//        System.out.print("Please enter username: ");
-//        user.setUsername(scanner.nextLine());
-//        System.out.print("Please enter password: ");
-//        user.setPassword(scanner.nextLine());
-//    }
-//    public static void signup(User user, Scanner scanner){
-//        System.out.print("Enter username: ");
-//        user.setUsername(scanner.nextLine());
-//        System.out.print("Enter email: ");
-//        user.setEmail(scanner.nextLine());
-//        System.out.print("Enter password: ");
-//        user.setPassword(scanner.nextLine());
-//        System.out.print("Enter confirm password: ");
-//        user.setConfirmPassword(scanner.nextLine());
-//    }
     public int userDashboardView(Scanner scanner) {
         int option = 0;
         try{
@@ -39,6 +23,22 @@ public class UserView {
             option = Integer.parseInt(scanner.nextLine());
         }catch ( NumberFormatException e ){
             System.err.println("Only number required!");
+        }
+        return option;
+    }
+
+    public int searchOption(Scanner scanner){
+        int option = 0;
+        try {
+            System.out.println("Option Menu");
+            System.out.println("1: Search By Id");
+            System.out.println("2: Search By Title");
+            System.out.println("3: Search By Author");
+            System.out.println("4: Search By Category");
+            System.out.print("Please choose Option: ");
+            option = Integer.parseInt(scanner.nextLine());
+        }catch (NumberFormatException e){
+            HelperView.message("Please choose option above...!");
         }
         return option;
     }

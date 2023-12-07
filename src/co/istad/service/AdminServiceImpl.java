@@ -106,7 +106,8 @@ public class AdminServiceImpl implements AdminService{
 
     @Override
     public List<Book> getAllBook() {
-        return null;
+        List<Book> books = adminDao.getAllBook();
+        return books;
     }
 
     @Override

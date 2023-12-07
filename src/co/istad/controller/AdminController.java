@@ -6,6 +6,7 @@ import co.istad.service.LoginService;
 import co.istad.storage.Storage;
 import co.istad.util.Singleton;
 import co.istad.view.AdminView;
+import co.istad.view.HelperView;
 import co.istad.view.HomepageView;
 
 import java.util.Scanner;
@@ -26,53 +27,12 @@ public class AdminController {
         loginService = Singleton.getLoginService();
         homepageView = Singleton.getHomepageView();
     }
-
-    /*
-    do {
-            homepageView.login(user, scanner);
-            loginService.login(user);
-            if (storage.getId() == null) {
-                System.out.println("Invalid ID. Please try again.");
-                continue login;
-            } else
-     */
-//    public void adminDashboard(){
-//        again:
-//        while (true) {
-//            if( storage.getId() == null ){
-//                continue again;
-//            }else
-//                switch (RoleEnum.valueOf(storage.getRole().getRole().name())) {
-//                    case ADMIN -> {
-//                        HelperView.welcome("Welcome to admin dashboard");
-//                        admin_inner:
-//                        while (true) {
-//                            int option = adminView.adminDashboardView(scanner);
-//                            switch (option) {
-//                                case 1: {
-//                                    Long count = adminService.getUserCount();
-//                                    System.out.println(count);
-//                                }
-//                                default: {
-//                                    storage.setId(null);
-//                                    continue again;
-//                                }
-//                            }
-//                        }
-//                    }
-//                    case USER -> {
-//                        HelperView.welcome("Welcome to user dashboard");
-//                        return;
-//                    }
-//                    case LIBRARIAN -> {
-//                        HelperView.welcome("Welcome to librarian dashboard");
-//                    }
-//                }
-//        }
-//    }
     public void adminDashboard(){
         User user = new User();
         do {
+            HelperView.welcome("=".repeat(50));
+            HelperView.welcome("Welcome to admin dashboard");
+            HelperView.welcome("=".repeat(50));
             int option = adminView.adminDashboardView(scanner);
             switch (option) {
                 case 1 -> {
@@ -87,12 +47,18 @@ public class AdminController {
                     Long librarianCount = adminService.getLibrarianCount();
                     adminView.allUserView(librarianCount, "Total Librarian");
                 }
-                default -> {
+                case 4 -> {
+                    getAllBook();
+                }
+                case 11 -> {
                     storage.setId(null);
                     return;
                 }
             }
         }while (true);
+    }
+    public void getAllBook(){
+        adminView.bookView(adminService.getAllBook());
     }
 }
 

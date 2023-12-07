@@ -264,6 +264,27 @@ public class UserDaoImpl implements UserDao {
 
     @Override
     public List<Borrow> bookHistory() {
-        return null;
+
+        List<Borrow> borrowList = new ArrayList<>();
+        String query = "SELECT  b.id, b.title , bw.is_borrow, bw.start_borrow_date, bw.deadline_borrow_date  FROM borrow bw INNER JOIN books b ON bw.book_id = b.id WHERE bw.user_id = ?";
+        try (PreparedStatement preparedStatement = ConnectionDb.getConnection().prepareStatement(query)) {
+            preparedStatement.setLong(1, storage.getId());
+            ResultSet rs =preparedStatement.executeQuery();
+            while (rs.next()) {
+                Borrow borrow = new Borrow();
+                Book book = new Book();
+                book.setId( rs.getLong("id"));
+                borrow.setBook(book);
+                book.setTitle(rs.getString("title"));
+                borrow.setBorrowDate(rs.getTimestamp("start_borrow_date").toLocalDateTime().toLocalDate());
+                borrow.setDeadline(rs.getTimestamp("deadline_borrow_date").toLocalDateTime().toLocalDate());
+                borrow.setBorrow(rs.getBoolean("is_borrow"));
+                borrowList.add(borrow);
+            }
+        } catch (SQLException e) {
+            throw new RuntimeException(e);
+        }
+        return borrowList;
     }
+
 }
