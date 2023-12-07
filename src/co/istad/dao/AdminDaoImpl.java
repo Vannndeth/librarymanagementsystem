@@ -5,10 +5,8 @@ import co.istad.model.Book;
 import co.istad.model.User;
 import co.istad.util.PasswordEncoder;
 
-import java.sql.Connection;
-import java.sql.Date;
-import java.sql.PreparedStatement;
-import java.sql.SQLException;
+import java.sql.*;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
@@ -30,37 +28,91 @@ public class AdminDaoImpl implements AdminDao {
 
     @Override
     public Long getUserCount() {
-        return null;
+        String query = """
+                    SELECT COUNT(*) FROM users WHERE role_id = 3
+                """;
+        return getCount(query);
     }
 
     @Override
     public Long getAdminCount() {
-        return null;
+        String query = """
+                    SELECT COUNT(*) FROM users WHERE role_id = 1
+                """;
+        return getCount(query);
+    }
+
+    private Long getCount(String query) {
+        Long count = 0L;
+        try (PreparedStatement statement = connection.prepareStatement(query)){
+            ResultSet rs = statement.executeQuery();
+            while (rs.next()){
+                count += rs.getLong(1);
+            }
+        } catch (SQLException e) {
+            throw new RuntimeException(e);
+        }
+        return count;
     }
 
     @Override
     public Long getLibrariansCount() {
-        return null;
+        String query = """
+                    SELECT COUNT(*) FROM user WHERE role_id = 2
+                """;
+        return getCount(query);
     }
 
     @Override
     public Long getBooksCount() {
-        return null;
+
+        String query = """
+                    SELECT COUNT(*) FROM BOOK
+                """;
+        return getCount(query);
     }
 
     @Override
     public List<User> getAllUser() {
-        return null;
+        List<User> userResponse = new ArrayList<>();
+        String query = """
+                    SELECT * FROM user WHERE role_id = 2
+                """;
+        return getUsers(userResponse, query);
     }
 
     @Override
     public List<User> getAllAdmin() {
-        return null;
+        List<User> userResponse = new ArrayList<>();
+        String query = """
+                    SELECT * FROM user WHERE role_id = 1
+                """;
+        return getUsers(userResponse, query);
+    }
+
+    private List<User> getUsers(List<User> userResponse, String query) {
+        try (PreparedStatement statement = connection.prepareStatement(query)){
+            ResultSet rs = statement.executeQuery();
+            while (rs.next()){
+                User userRes = new User();
+                userRes.setId(rs.getLong("id"));
+                userRes.setUsername(rs.getString("username"));
+                userRes.setDisable(rs.getBoolean("is_Disable"));
+                userResponse.add(userRes);
+            }
+        } catch (SQLException e) {
+            throw new RuntimeException(e);
+        }
+        return userResponse;
     }
 
     @Override
     public List<User> getAllLibrarians() {
-        return null;
+        List<User> userResponse = new ArrayList<>();
+        String query = """
+                    SELECT * FROM user WHERE role = LIBRARIAN
+                """;
+        return getUsers(userResponse, query);
     }
 
     @Override
@@ -110,7 +162,23 @@ public class AdminDaoImpl implements AdminDao {
 
     @Override
     public List<Book> getAllBook() {
-        return null;
+        List<Book> booksResp = new ArrayList<>();
+        String query = """
+           SELECT * FROM books;
+        """;
+        try ( PreparedStatement preparedStatement = this.connection.prepareStatement(query)) {
+            ResultSet rs = preparedStatement.executeQuery();
+            while (rs.next()) {
+                Book bookRes = new Book();
+                bookRes.setId(rs.getLong("id"));
+                bookRes.setTitle(rs.getString("title"));
+                bookRes.setQuantity(rs.getInt("Quantity"));
+                booksResp.add(bookRes);
+            }
+        } catch (SQLException e) {
+            throw new RuntimeException(e);
+        }
+        return booksResp;
     }
 
     @Override

@@ -24,7 +24,7 @@ public class HomepageView {
                 "                                                                                                                                                                   ");
         System.out.println("WELCOME TO CSTAD LIBRARY\n");
     }
-    public static int registerOption(Scanner scanner){
+    public int registerOption(Scanner scanner){
         int option;
         Table table = new Table(10, BorderStyle.UNICODE_BOX_DOUBLE_BORDER_WIDE, ShownBorders.ALL);
         table.addCell("1) Sign in", 5);
@@ -34,7 +34,7 @@ public class HomepageView {
         option = Integer.parseInt(scanner.nextLine());
         return option;
     }
-    public static void login(User user, Scanner scanner){
+    public void login(User user, Scanner scanner){
         System.out.print("Please enter username: ");
         user.setUsername(scanner.nextLine());
         System.out.print("Please enter password: ");

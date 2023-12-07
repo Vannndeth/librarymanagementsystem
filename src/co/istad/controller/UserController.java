@@ -23,22 +23,25 @@ public class UserController {
     private Storage storage;
     private final SignupService signupService;
     private final LoginService loginService;
+    private final HomepageView homepageView;
     public UserController(){
         loginService = Singleton.getLoginService();
         scanner = Singleton.scanner();
         userService = Singleton.getUserServiceImpl();
         storage = Singleton.getStorage();
         signupService = Singleton.getSignupService();
+        homepageView = Singleton.getHomepageView();
     }
     private final UserService userService;
     public void signup(){
         User user = new User();
         user.setRole(new Role());
         user.getRole().setId(3L);
-        UserView.signup(user, scanner);
+        homepageView.signup(user, scanner);
         user = signupService.signup(user);
         System.out.println(user);
     }
+
 
 
 }

@@ -18,6 +18,7 @@ public class MainApplication {
     private final AdminController adminController;
     private final LoginController loginController;
     private final SignupController signupController;
+    private final HomepageView homepageView;
     public MainApplication(){
         scanner = Singleton.scanner();
         userController = Singleton.getUserController();
@@ -29,11 +30,12 @@ public class MainApplication {
         adminController = Singleton.getAdminController();
         loginController = Singleton.getLoginController();
         signupController = Singleton.getSignupController();
+        homepageView = Singleton.getHomepageView();
     }
     public void initialize(){
         HomepageView.logo();
         do {
-            int option = HomepageView.registerOption(scanner);
+            int option = homepageView.registerOption(scanner);
             switch (option){
                 case 1 -> {
                     loginController.login();

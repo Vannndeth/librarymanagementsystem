@@ -20,17 +20,6 @@ public class LoginService {
     }
 
     public User login(User user) {
-      /*  User res = MainFeatureDao.login(user, connection);
-        if (res.getId() != null) {
-            storage.setId(res.getId());
-            storage.setUsername(res.getUsername());
-            storage.setRole(res.getRole());
-        }else {
-            storage.setId(null);
-        }
-         return res;
-
-    }*/
         User res = MainFeatureDao.login(user, connection);
         if (res.getId() == null) {
             System.out.println("Invalid username or password. Please try again.");

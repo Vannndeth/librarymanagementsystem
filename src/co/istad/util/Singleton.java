@@ -11,6 +11,9 @@ import co.istad.service.LoginService;
 import co.istad.service.SignupService;
 import co.istad.service.UserServiceImpl;
 import co.istad.storage.Storage;
+import co.istad.view.AdminView;
+import co.istad.view.HomepageView;
+import co.istad.view.UserView;
 
 import java.util.Scanner;
 
@@ -21,6 +24,7 @@ public class Singleton {
     private static UserController userController;
     private static AdminDaoImpl adminDao;
     private static AdminServiceImpl adminService;
+    private static AdminView adminView;
     private static AdminController adminController;
     private static LoginController loginController;
     private static LoginService loginService;
@@ -28,6 +32,8 @@ public class Singleton {
     private static SignupController signupController;
     private static Seeder seeder;
     private static Storage storage;
+    private static HomepageView homepageView;
+    private static UserView userView;
 
     public static Scanner scanner(){
         if(scanner == null){
@@ -85,6 +91,14 @@ public class Singleton {
         }
         return storage;
     }
+    public static AdminView getAdminView() {
+        if (adminView == null){
+            adminView = new AdminView();
+        }
+        return adminView;
+    }
+
+
     public static LoginController getLoginController(){
         if( loginController == null ) {
             loginController = new LoginController();
@@ -108,6 +122,18 @@ public class Singleton {
             signupController = new SignupController();
         }
         return signupController;
+    }
+    public static HomepageView getHomepageView(){
+        if( homepageView == null ) {
+            homepageView = new HomepageView();
+        }
+        return homepageView;
+    }
+    public static UserView getUserView(){
+        if( userView == null ) {
+            userView = new UserView();
+        }
+        return userView;
     }
 
 }

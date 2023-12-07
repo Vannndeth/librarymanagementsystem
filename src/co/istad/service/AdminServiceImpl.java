@@ -25,12 +25,13 @@ public class AdminServiceImpl implements AdminService{
 
     @Override
     public Long getUserCount() {
-        return null;
+        return adminDao.getUserCount();
     }
 
     @Override
     public Long getAdminCount() {
-        return null;
+
+        return adminDao.getAdminCount();
     }
 
     @Override
