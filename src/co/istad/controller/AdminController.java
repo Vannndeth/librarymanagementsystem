@@ -58,6 +58,7 @@ public class AdminController {
         }while (true);
     }
     public void getAllBook(){
+
         adminView.bookView(adminService.getAllBook());
     }
 }
