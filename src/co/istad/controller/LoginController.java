@@ -22,6 +22,7 @@ public class LoginController {
     private final AdminView adminView;
     private final AdminController adminController;
     private final HomepageView homepageView;
+    private final LibrarianController librarianController;
     public LoginController(){
         scanner = Singleton.scanner();
         loginService = Singleton.getLoginService();
@@ -32,6 +33,7 @@ public class LoginController {
         adminView = Singleton.getAdminView();
         adminController = Singleton.getAdminController();
         homepageView = Singleton.getHomepageView();
+        librarianController = Singleton.getLibrarianController();
     }
     public void login(){
         User user = new User();
@@ -50,7 +52,9 @@ public class LoginController {
                         return;
                     }
                     case LIBRARIAN -> {
-                        System.out.println("LIBRARIAN");
+                        librarianController.librarianDashboard();
+                        storage.setId(null);
+                        return;
                     }
                     case ADMIN -> {
                         adminController.adminDashboard();
