@@ -25,7 +25,7 @@ public class AdminView {
             table.addCell("1) View total admin");
             table.addCell("2) View total Librarian");
             table.addCell("3) View total user");
-            table.addCell("4) View total book");
+            table.addCell("4) View book detail");
             table.addCell("5) View admin detail");
             table.addCell("6) View user detail");
             table.addCell("7) View librarian detail");
@@ -93,4 +93,17 @@ public class AdminView {
         });
         System.out.println(table.render());
     }
+    public void disableAccountView(User user, Scanner scanner){
+        System.out.print("Enter account id: ");
+        user.setId(Long.parseLong(scanner.nextLine()));
+        System.out.print("Set account disable: ");
+        user.setDisable(Boolean.parseBoolean(scanner.nextLine()));
+    }
+    public void resetPasswordView(User user, Scanner scanner){
+        System.out.print("Enter account id: ");
+        user.setId(Long.parseLong(scanner.nextLine()));
+        System.out.print("Set new password: ");
+        user.setPassword(scanner.nextLine());
+    }
+
 }

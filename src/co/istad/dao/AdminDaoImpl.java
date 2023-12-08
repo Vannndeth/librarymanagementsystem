@@ -98,17 +98,39 @@ public class AdminDaoImpl implements AdminDao {
     }
 
     @Override
-    public void resetPassword() {
-
+    public void resetPassword(User user) {
+        String query = """
+                    UPDATE users
+                    SET password = ?
+                    WHERE id = ?
+                """;
+        try (PreparedStatement statement = connection.prepareStatement(query)){
+            statement.setString(1, user.getPassword());
+            statement.setLong(2, user.getId());
+            statement.executeUpdate();
+        } catch (SQLException e) {
+            throw new RuntimeException(e);
+        }
     }
 
     @Override
-    public void disableAccount() {
-
+    public void disableAccount(User user) {
+        String query = """
+                    UPDATE users
+                    SET is_disable = ?
+                    WHERE id = ?
+                """;
+        try (PreparedStatement statement = connection.prepareStatement(query)){
+            statement.setBoolean(1, user.getDisable());
+            statement.setLong(2, user.getId());
+            statement.executeUpdate();
+        } catch (SQLException e) {
+            throw new RuntimeException(e);
+        }
     }
 
     @Override
-    public User removeAccount() {
+    public User removeAccount(User user) {
         return null;
     }
 
