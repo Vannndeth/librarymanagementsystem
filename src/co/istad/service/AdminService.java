@@ -15,8 +15,8 @@ public interface AdminService extends MainFeatureService {
     public List<User> getAllAdmin ();
     public List<User> getAllLibrarian();
     public void getReport();
-    public void resetPassword();
-    public void disableAccount();
-    public User removeAccount();
+    public void resetPassword(User user);
+    public void disableAccount(User user);
+    public User removeAccount(User user);
     public void saveReportAsExcel();
 }
