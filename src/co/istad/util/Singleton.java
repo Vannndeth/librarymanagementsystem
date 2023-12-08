@@ -1,10 +1,9 @@
 package co.istad.util;
 
-import co.istad.controller.AdminController;
-import co.istad.controller.LoginController;
-import co.istad.controller.SignupController;
-import co.istad.controller.UserController;
+import co.istad.controller.*;
 import co.istad.dao.AdminDaoImpl;
+import co.istad.dao.LibrarianDao;
+import co.istad.dao.LibrarianDaoImpl;
 import co.istad.dao.UserDaoImpl;
 import co.istad.service.AdminServiceImpl;
 import co.istad.service.LoginService;
@@ -13,6 +12,7 @@ import co.istad.service.UserServiceImpl;
 import co.istad.storage.Storage;
 import co.istad.view.AdminView;
 import co.istad.view.HomepageView;
+import co.istad.view.LibrarianView;
 import co.istad.view.UserView;
 
 import java.util.Scanner;
@@ -35,6 +35,10 @@ public class Singleton {
     private static HomepageView homepageView;
     private static UserView userView;
     private static AdminUtil adminUtil;
+    private static LibrarianController librarianController;
+    private static LibrarianDao librarianDao;
+    private static LibrarianView librarianView;
+
 
     public static Scanner scanner(){
         if(scanner == null){
@@ -141,6 +145,21 @@ public class Singleton {
             adminUtil = new AdminUtil();
         }
         return adminUtil;
+    }
+
+    public static LibrarianController getLibrarianController(){
+        if( librarianController == null ) librarianController = new LibrarianController();
+        return librarianController;
+    }
+
+    public static LibrarianDao getLibrarianDao(){
+        if( librarianDao == null ) librarianDao = new LibrarianDaoImpl();
+        return librarianDao;
+    }
+
+    public static LibrarianView getLibrarianView(){
+        if( librarianView == null ) librarianView = new LibrarianView();
+        return librarianView;
     }
 
 }
