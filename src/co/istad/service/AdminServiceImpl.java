@@ -64,17 +64,17 @@ public class AdminServiceImpl implements AdminService{
     }
 
     @Override
-    public void resetPassword() {
-
+    public void resetPassword(User user) {
+        adminDao.resetPassword(user);
     }
 
     @Override
-    public void disableAccount() {
-
+    public void disableAccount(User user) {
+        adminDao.disableAccount(user);
     }
 
     @Override
-    public User removeAccount() {
+    public User removeAccount(User user) {
         return null;
     }
 

@@ -57,7 +57,29 @@ public class AdminController {
                 case 7 -> {
                     getAllUser();
                 }
+                case 8 -> {
+                    System.out.println("");
+                }
+                case 9 -> {
+                    resetPassword();
+                }
+                case 10 -> {
+                    disableAccount();
+                }
                 case 11 -> {
+                    System.out.println("lll");
+                }
+                case 12 -> {
+                    System.out.println(";;");
+                }
+                case 13 -> {
+                    System.out.println("pp");
+                }
+                case 14 -> {
+                    System.out.println("k");
+                }
+
+                default -> {
                     storage.setId(null);
                     return;
                 }
@@ -70,12 +92,12 @@ public class AdminController {
         adminView.countUserView(adminCount, "Total Admin");
     }
     public void getLibrarianCount(){
-        Long userCount = adminService.getUserCount();
-        adminView.countUserView(userCount,"Total User");
+        Long userCount = adminService.getLibrarianCount();
+        adminView.countUserView(userCount,"Total Librarian");
     }
     public void getUserCount(){
-        Long librarianCount = adminService.getLibrarianCount();
-        adminView.countUserView(librarianCount, "Total Librarian");
+        Long librarianCount = adminService.getUserCount();
+        adminView.countUserView(librarianCount, "Total User");
     }
     public void getAllBook(){
         adminView.bookView(adminService.getAllBook());
@@ -88,6 +110,18 @@ public class AdminController {
         adminView.usersView(adminService.getAllUser());
     }
 
+    public void disableAccount(){
+        User user = new User();
+        adminView.disableAccountView(user, scanner);
+        adminService.disableAccount(user);
+        HelperView.message(String.format("Account id %d disabled = %b",user.getId(), user.getDisable()));
+    }
+    public void resetPassword(){
+        User user = new User();
+        adminView.resetPasswordView(user, scanner);
+        adminService.resetPassword(user);
+        HelperView.message(String.format("Account id %d reset password successfully...",user.getId()));
+    }
 }
 
 
