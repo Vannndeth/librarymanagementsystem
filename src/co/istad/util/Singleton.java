@@ -5,10 +5,7 @@ import co.istad.dao.AdminDaoImpl;
 import co.istad.dao.LibrarianDao;
 import co.istad.dao.LibrarianDaoImpl;
 import co.istad.dao.UserDaoImpl;
-import co.istad.service.AdminServiceImpl;
-import co.istad.service.LoginService;
-import co.istad.service.SignupService;
-import co.istad.service.UserServiceImpl;
+import co.istad.service.*;
 import co.istad.storage.Storage;
 import co.istad.view.AdminView;
 import co.istad.view.HomepageView;
@@ -38,6 +35,7 @@ public class Singleton {
     private static LibrarianController librarianController;
     private static LibrarianDao librarianDao;
     private static LibrarianView librarianView;
+    private static LibrarianService librarianService;
 
 
     public static Scanner scanner(){
@@ -160,6 +158,10 @@ public class Singleton {
     public static LibrarianView getLibrarianView(){
         if( librarianView == null ) librarianView = new LibrarianView();
         return librarianView;
+    }
+    public static LibrarianService getLibrarianService(){
+        if( librarianService == null ) librarianService = new LibrarianServiceImpl();
+        return librarianService;
     }
 
 }
