@@ -5,7 +5,7 @@ import co.istad.model.User;
 import java.util.List;
 
 public interface AdminDao extends MainFeatureDao {
-    public void backUp();
+    public void backup();
     public void restore();
     public Long getUserCount();
     public Long getAdminCount();

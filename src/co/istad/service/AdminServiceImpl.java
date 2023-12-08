@@ -30,7 +30,6 @@ public class AdminServiceImpl implements AdminService{
 
     @Override
     public Long getAdminCount() {
-
         return adminDao.getAdminCount();
     }
 
@@ -41,22 +40,22 @@ public class AdminServiceImpl implements AdminService{
 
     @Override
     public Long getBooksCount() {
-        return null;
+        return adminDao.getBooksCount();
     }
 
     @Override
     public List<User> getAllUser() {
-        return null;
+        return adminDao.getAllUser();
     }
 
     @Override
     public List<User> getAllAdmin() {
-        return null;
+        return adminDao.getAllAdmin();
     }
 
     @Override
     public List<User> getAllLibrarian() {
-        return null;
+        return adminDao.getAllLibrarian();
     }
 
     @Override

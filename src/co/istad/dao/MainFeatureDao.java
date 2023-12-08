@@ -18,19 +18,19 @@ public interface MainFeatureDao {
                     SELECT u.*, r.name as role_name, r.id as role_id FROM users u
                         INNER JOIN roles r
                         ON r.id = u.role_id
-                        WHERE (username = ? OR email = ?) AND password = ?
+                        WHERE (username = ? OR email = ?) AND password = ? AND is_disable = ?
                 """;
         try (PreparedStatement statement = connection.prepareStatement(query)){
             statement.setString(1, user.getUsername());
             statement.setString(2, user.getUsername());
-            statement.setString(3, user.getPassword() );
+            statement.setString(3, user.getPassword());
+            statement.setBoolean(4, false);
             ResultSet rs = statement.executeQuery();
             while (rs.next()){
                 Role role = new Role();
                 role.setId( rs.getLong("role_id") );
                 role.setRole( RoleEnum.valueOf( rs.getString("role_name") ) );
                 user.setUsername( rs.getString("username") );
-//                user.setEmail( rs.getString("email") );
                 user.setId(rs.getLong("id") );
                 user.setRole( role );
                 userRepo = user;

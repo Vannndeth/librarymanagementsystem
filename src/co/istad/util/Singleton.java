@@ -34,6 +34,7 @@ public class Singleton {
     private static Storage storage;
     private static HomepageView homepageView;
     private static UserView userView;
+    private static AdminUtil adminUtil;
 
     public static Scanner scanner(){
         if(scanner == null){
@@ -134,6 +135,12 @@ public class Singleton {
             userView = new UserView();
         }
         return userView;
+    }
+    public static AdminUtil getAdminUtil(){
+        if(adminUtil == null){
+            adminUtil = new AdminUtil();
+        }
+        return adminUtil;
     }
 
 }

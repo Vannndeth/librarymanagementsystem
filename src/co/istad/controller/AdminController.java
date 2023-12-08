@@ -29,26 +29,33 @@ public class AdminController {
     }
     public void adminDashboard(){
         User user = new User();
+        HelperView.welcome("=".repeat(50));
+        HelperView.welcome("Welcome to admin dashboard");
+        HelperView.welcome("=".repeat(50));
+        adminView.dashboardOverview();
         do {
-            HelperView.welcome("=".repeat(50));
-            HelperView.welcome("Welcome to admin dashboard");
-            HelperView.welcome("=".repeat(50));
             int option = adminView.adminDashboardView(scanner);
             switch (option) {
                 case 1 -> {
-                    Long adminCount = adminService.getAdminCount();
-                    adminView.allUserView(adminCount, "Total Admin");
+                    getAdminCount();
                 }
                 case 2 -> {
-                    Long userCount = adminService.getUserCount();
-                    adminView.allUserView(userCount,"Total User");
+                    getLibrarianCount();
                 }
                 case 3 -> {
-                    Long librarianCount = adminService.getLibrarianCount();
-                    adminView.allUserView(librarianCount, "Total Librarian");
+                    getUserCount();
                 }
                 case 4 -> {
                     getAllBook();
+                }
+                case 5 -> {
+                    getAllAdmin();
+                }
+                case 6 -> {
+                    getAllLibrarian();
+                }
+                case 7 -> {
+                    getAllUser();
                 }
                 case 11 -> {
                     storage.setId(null);
@@ -57,10 +64,30 @@ public class AdminController {
             }
         }while (true);
     }
-    public void getAllBook(){
 
+    public void getAdminCount(){
+        Long adminCount = adminService.getAdminCount();
+        adminView.countUserView(adminCount, "Total Admin");
+    }
+    public void getLibrarianCount(){
+        Long userCount = adminService.getUserCount();
+        adminView.countUserView(userCount,"Total User");
+    }
+    public void getUserCount(){
+        Long librarianCount = adminService.getLibrarianCount();
+        adminView.countUserView(librarianCount, "Total Librarian");
+    }
+    public void getAllBook(){
         adminView.bookView(adminService.getAllBook());
     }
+    public void getAllAdmin(){
+        adminView.usersView(adminService.getAllAdmin());
+    }public void getAllLibrarian(){
+        adminView.usersView(adminService.getAllLibrarian());
+    }public void getAllUser(){
+        adminView.usersView(adminService.getAllUser());
+    }
+
 }
 
 

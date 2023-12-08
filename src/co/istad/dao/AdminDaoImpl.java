@@ -3,7 +3,9 @@ package co.istad.dao;
 import co.istad.connection.ConnectionDb;
 import co.istad.model.Book;
 import co.istad.model.User;
+import co.istad.util.AdminUtil;
 import co.istad.util.PasswordEncoder;
+import co.istad.util.Singleton;
 
 import java.sql.*;
 import java.util.ArrayList;
@@ -13,11 +15,13 @@ import java.util.Optional;
 public class AdminDaoImpl implements AdminDao {
 
     private final Connection connection;
+    private final AdminUtil adminUtil;
     public AdminDaoImpl(){
         connection = ConnectionDb.getConnection();
+        adminUtil = Singleton.getAdminUtil();
     }
     @Override
-    public void backUp() {
+    public void backup() {
 
     }
 
@@ -31,7 +35,7 @@ public class AdminDaoImpl implements AdminDao {
         String query = """
                     SELECT COUNT(*) FROM users WHERE role_id = 3
                 """;
-        return getCount(query);
+        return adminUtil.getCount(query);
     }
 
     @Override
@@ -39,20 +43,7 @@ public class AdminDaoImpl implements AdminDao {
         String query = """
                     SELECT COUNT(*) FROM users WHERE role_id = 1
                 """;
-        return getCount(query);
-    }
-
-    private Long getCount(String query) {
-        Long count = 0L;
-        try (PreparedStatement statement = connection.prepareStatement(query)){
-            ResultSet rs = statement.executeQuery();
-            while (rs.next()){
-                count += rs.getLong(1);
-            }
-        } catch (SQLException e) {
-            throw new RuntimeException(e);
-        }
-        return count;
+        return adminUtil.getCount(query);
     }
 
     @Override
@@ -60,59 +51,45 @@ public class AdminDaoImpl implements AdminDao {
         String query = """
                     SELECT COUNT(*) FROM users WHERE role_id = 2
                 """;
-        return getCount(query);
+        return adminUtil.getCount(query);
     }
 
     @Override
     public Long getBooksCount() {
-
         String query = """
-                    SELECT COUNT(*) FROM BOOK
+                    SELECT COUNT(*) FROM books
                 """;
-        return getCount(query);
+        return adminUtil.getCount(query);
     }
 
     @Override
     public List<User> getAllUser() {
         List<User> userResponse = new ArrayList<>();
         String query = """
-                    SELECT * FROM users WHERE role_id = 2
+                    SELECT u.*, r.name AS role FROM users u
+                    INNER JOIN roles r ON u.role_id = r.id WHERE role_id = 3
                 """;
-        return getUsers(userResponse, query);
+        return adminUtil.getUsers(userResponse, query);
     }
 
     @Override
     public List<User> getAllAdmin() {
         List<User> userResponse = new ArrayList<>();
         String query = """
-                    SELECT * FROM users WHERE role_id = 1
+                    SELECT u.*, r.name AS role FROM users u
+                    INNER JOIN roles r ON u.role_id = r.id WHERE role_id = 1
                 """;
-        return getUsers(userResponse, query);
-    }
-
-    private List<User> getUsers(List<User> userResponse, String query) {
-        try (PreparedStatement statement = connection.prepareStatement(query)){
-            ResultSet rs = statement.executeQuery();
-            while (rs.next()){
-                User userRes = new User();
-                userRes.setId(rs.getLong("id"));
-                userRes.setUsername(rs.getString("username"));
-                userRes.setDisable(rs.getBoolean("is_Disable"));
-                userResponse.add(userRes);
-            }
-        } catch (SQLException e) {
-            throw new RuntimeException(e);
-        }
-        return userResponse;
+        return adminUtil.getUsers(userResponse, query);
     }
 
     @Override
     public List<User> getAllLibrarian() {
         List<User> userResponse = new ArrayList<>();
         String query = """
-                    SELECT * FROM users WHERE role = LIBRARIAN
+                    SELECT u.*, r.name AS role FROM users u
+                    INNER JOIN roles r ON u.role_id = r.id WHERE role_id = 2                                     
                 """;
-        return getUsers(userResponse, query);
+        return adminUtil.getUsers(userResponse, query);
     }
 
     @Override
