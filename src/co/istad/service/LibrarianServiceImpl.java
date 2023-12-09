@@ -1,14 +1,21 @@
 package co.istad.service;
 
+import co.istad.dao.LibrarianDao;
+import co.istad.dao.LibrarianDaoImpl;
 import co.istad.model.Author;
 import co.istad.model.Book;
 import co.istad.model.Category;
 import co.istad.model.User;
+import co.istad.util.Singleton;
 
 import java.util.List;
 import java.util.Optional;
 
 public class LibrarianServiceImpl implements LibrarianService{
+    private final LibrarianDao librarianDao;
+    public LibrarianServiceImpl(){
+        this.librarianDao = Singleton.getLibrarianDao();
+    }
     @Override
     public Category createCategory(Category category) {
         return null;
@@ -21,7 +28,7 @@ public class LibrarianServiceImpl implements LibrarianService{
 
     @Override
     public Book createBook(Book book) {
-        return null;
+        return librarianDao.createBook(book);
     }
 
     @Override
@@ -51,22 +58,22 @@ public class LibrarianServiceImpl implements LibrarianService{
 
     @Override
     public Author createAuthor(Author author) {
-        return null;
+        return this.librarianDao.createAuthor(author);
     }
 
     @Override
     public List<Author> getAll() {
-        return null;
+        return librarianDao.getAll() ;
     }
 
     @Override
     public Author searchAuthorById(Long id) {
-        return null;
+        return librarianDao.searchAuthorById(id);
     }
 
     @Override
     public Author updateAuthorById(Long id, Author author) {
-        return null;
+        return librarianDao.updateAuthorById(id, author);
     }
 
     @Override
