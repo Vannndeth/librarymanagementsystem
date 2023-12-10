@@ -77,13 +77,18 @@ public class LibrarianServiceImpl implements LibrarianService{
     }
 
     @Override
+    public List<Author> searchAuthorByName(String authName) {
+        return librarianDao.searchAuthorByName(authName);
+    }
+
+    @Override
     public Author deleteById(Long id) {
         return null;
     }
 
     @Override
     public Optional<Book> searchBookById(Long id) {
-        return Optional.empty();
+        return librarianDao.searchBookById(id);
     }
 
     @Override
@@ -115,4 +120,9 @@ public class LibrarianServiceImpl implements LibrarianService{
     public Optional<User> searchUserByUsername(String username) {
         return Optional.empty();
     }
+
+    public List<Author> authorPagination( int page, int limit ){
+        return librarianDao.authorPagination(page, limit);
+    }
+
 }

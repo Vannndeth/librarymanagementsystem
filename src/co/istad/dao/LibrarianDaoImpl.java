@@ -33,14 +33,21 @@ public class LibrarianDaoImpl implements LibrarianDao {
 
     @Override
     public Book createBook(Book book) {
-        String query = """
+        String queryBook = """
                 INSERT INTO books(title, author_id, quantity, user_id, description)
                 VALUES( ?, ?, ?, ?, ? )
                 RETURNING id, title, author_id, user_id, description, quantity;
                 """;
+        String queryCategoryDetails = """
+            INSERT INTO category_book_details(book_id, category_id) VALUES(?, ?);
+            """;
         Book bk = null;
-        try(PreparedStatement preparedStatement = this.connection.prepareStatement( query ) ){
-            // Set Data
+        try(
+                PreparedStatement preparedStatement = this.connection.prepareStatement( queryBook );
+                PreparedStatement preparedStatement1 = this.connection.prepareStatement( queryCategoryDetails )
+        ){
+            this.connection.setAutoCommit(false);
+            // Set Data Book
             preparedStatement.setString( 1, book.getTitle() );
             preparedStatement.setLong( 2, book.getAuthor().getId() );
             preparedStatement.setInt( 3, book.getQuantity() );
@@ -52,7 +59,6 @@ public class LibrarianDaoImpl implements LibrarianDao {
             User user = new User();
             ResultSet resultSet = preparedStatement.executeQuery();
             while ( resultSet.next() ){
-
                 bk = new Book();
                 author.setId( resultSet.getLong("author_id") );
                 user.setId( resultSet.getLong("user_id") );
@@ -60,20 +66,69 @@ public class LibrarianDaoImpl implements LibrarianDao {
                 bk.setQuantity( resultSet.getInt( "quantity" ) );
                 bk.setAuthor( author );
                 bk.setUser( user );
-
             }
+            System.out.println("testing 1");
+            //Second
+            // Set Data Category
+            preparedStatement1.setLong( 1, bk.getId() );
+            preparedStatement1.setLong( 2, book.getCategory().getId() );
+            preparedStatement1.executeUpdate();
+            connection.commit();
 
             return bk;
 
-        }catch (SQLException ex){
-            System.err.println(ex.getMessage());
-            return bk;
+        }catch (SQLException | NullPointerException ex){
+            try {
+                this.connection.rollback();
+                HelperView.error(ex.getMessage());
+            }catch (SQLException e){
+                HelperView.error( e.getMessage() );
+            }
         }
+        return bk;
     }
 
     @Override
     public Book updateBookById(Long id, Book book) {
-        return null;
+        Book bk = null;
+        String query = """
+                UPDATE books
+                SET title = ?,
+                author_id = ?,
+                quantity = ?,
+                user_id = ?,
+                description = ?
+                WHERE id = ?
+                RETURNING id, title, author_id, quantity, user_id, description;
+                """;
+        try(PreparedStatement preparedStatement = this.connection.prepareStatement(query)){
+            //Add Data
+            preparedStatement.setString( 1, book.getTitle() );
+            preparedStatement.setLong( 2, book.getAuthor().getId() );
+            preparedStatement.setInt( 3, book.getQuantity() );
+            preparedStatement.setLong( 4, book.getUser().getId() );
+            preparedStatement.setString( 5, book.getDescription() );
+            preparedStatement.setLong( 6, book.getId() );
+            ResultSet resultSet = preparedStatement.executeQuery();
+            while (resultSet.next()){
+                bk = new Book();
+                Author author = new Author();
+                User user = new User();
+                bk.setId( resultSet.getLong("id") );
+                bk.setTitle( resultSet.getString("title") );
+                author.setId( resultSet.getLong("author_id") );
+                user.setId( resultSet.getLong("user_id") );
+                bk.setAuthor( author );
+                bk.setUser( user );
+                bk.setQuantity( resultSet.getInt("quantity") );
+                bk.setDescription( resultSet.getString("description") );
+            }
+            return bk;
+        }
+        catch (Exception ex){
+            HelperView.error( ex.getMessage() );
+            return null;
+        }
     }
 
     @Override
@@ -127,6 +182,9 @@ public class LibrarianDaoImpl implements LibrarianDao {
     }
 
     @Override
+    /**
+     * Get ALl Authors
+     * **/
     public List<Author> getAll() {
         List<Author> authors = null;
         String query = """
@@ -206,13 +264,82 @@ public class LibrarianDaoImpl implements LibrarianDao {
     }
 
     @Override
+    /**
+     * Delete Author By Id
+     */
     public Author deleteById(Long id) {
         return null;
     }
 
     @Override
+    public List<Author> searchAuthorByName(String authorName) {
+        List<Author> authors = null;
+        String query = """
+                SELECT * FROM authors WHERE ( firstname || lastname ) ILIKE ?;
+                """;
+        try(PreparedStatement preparedStatement = this.connection.prepareStatement(query)) {
+            // Add Data
+            preparedStatement.setString(1, "%" + authorName + "%" );
+            ResultSet resultSet = preparedStatement.executeQuery();
+            authors = new ArrayList<>();
+            while ( resultSet.next() ){
+                Author author = new Author();
+                author.setId( resultSet.getLong("id") );
+                author.setFirstName( resultSet.getString("firstname") );
+                author.setLastName( resultSet.getString("lastname") );
+                author.setEmail( resultSet.getString("email") );
+                authors.add(author);
+            }
+            return authors;
+        }catch (Exception ex){
+            HelperView.error(ex.getMessage());
+            return authors;
+        }
+    }
+
+    @Override
     public Optional<Book> searchBookById(Long id) {
-        return Optional.empty();
+        String query = """
+                    SELECT b.* ,a.email as "auth_email", a.firstname as "auth_firstname", a.lastname as "auth_lastname" , a."id" as "auth_id" ,a.firstname as "auth_firstname", a.lastname as "auth_lastname", u.username as "user_username", c."id" as "category_id", c."name" as "category_name" FROM books b
+                   INNER JOIN authors a ON a."id" = b.author_id
+                   INNER JOIN users u ON u."id" = b.user_id
+                   INNER JOIN category_book_details ctb ON ctb.book_id = b."id"
+                   INNER JOIN category c ON ctb.category_id = c."id"
+                   WHERE b.id = ?;
+                """;
+        try ( PreparedStatement preparedStatement = this.connection.prepareStatement( query ) ) {
+            Book book = null;
+            //Add Data
+            preparedStatement.setLong( 1, id );
+            ResultSet resultSet = preparedStatement.executeQuery();
+            while ( resultSet.next() ){
+                Category category = new Category();
+                book = new Book();
+                Author author = new Author();
+                User user = new User();
+                book.setId( resultSet.getLong("id") );
+                book.setTitle( resultSet.getString("title") );
+                book.setDescription( resultSet.getString("description") );
+                category.setId( resultSet.getLong("category_id") );
+                category.setName( resultSet.getString("category_name") );
+                author.setId( resultSet.getLong("auth_id") );
+                author.setFirstName( resultSet.getString("auth_firstname") );
+                author.setLastName( resultSet.getString("auth_lastname") );
+                author.setEmail( resultSet.getString("auth_email") );
+                user.setUsername( resultSet.getString("user_username") );
+                book.setCategory(category);
+                book.setAuthor(author);
+                book.setQuantity( resultSet.getInt("quantity") );
+                book.setUser( user );
+            }
+            if( book == null ) {
+                return Optional.empty();
+            }
+            return Optional.of( book );
+        }catch (Exception ex){
+            HelperView.error(ex.getMessage());
+            return Optional.empty();
+        }
     }
 
     @Override
@@ -244,4 +371,31 @@ public class LibrarianDaoImpl implements LibrarianDao {
     public Optional<User> searchUserByUsername(String username) {
         return Optional.empty();
     }
+
+    public List<Author> authorPagination( int page, int limit ){
+        List<Author> authors = new ArrayList<>();
+        String query = """
+                   SELECT * FROM authors LIMIT ? OFFSET ?
+                """;
+        try( PreparedStatement preparedStatement = this.connection.prepareStatement(query) ){
+            //Add Data
+            preparedStatement.setInt( 1, limit );
+            preparedStatement.setInt( 2, (page < 1 ) ? page : page - 1 );
+            ResultSet resultSet = preparedStatement.executeQuery();
+            while (resultSet.next()){
+                Author author = new Author();
+                author.setId( resultSet.getLong("id") );
+                author.setFirstName( resultSet.getString("firstname") );
+                author.setLastName( resultSet.getString("lastname") );
+                author.setEmail( resultSet.getString("email") );
+                authors.add(author);
+            }
+            return authors;
+        }
+        catch (Exception ex){
+            HelperView.error(ex.getMessage());
+            return authors;
+        }
+    }
+
 }
