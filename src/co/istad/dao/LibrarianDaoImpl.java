@@ -386,7 +386,6 @@ public class LibrarianDaoImpl implements LibrarianDao {
         }
     }
 
-
     @Override
     public Optional<List<Book>> searchBookByAuthor(String author) {
         return Optional.empty();
@@ -399,7 +398,44 @@ public class LibrarianDaoImpl implements LibrarianDao {
 
     @Override
     public List<Book> getAllBook() {
-        return null;
+        List<Book> books = new ArrayList<>();
+        String query = """
+                SELECT b.* ,a.email as "auth_email", a.firstname as "auth_firstname", a.lastname as "auth_lastname" , a."id" as "auth_id" ,a.firstname as "auth_firstname", a.lastname as "auth_lastname", u.username as "user_username", c."id" as "category_id", c."name" as "category_name" FROM books b
+                   INNER JOIN authors a ON a."id" = b.author_id
+                   INNER JOIN users u ON u."id" = b.user_id
+                   INNER JOIN category_book_details ctb ON ctb.book_id = b."id"
+                   INNER JOIN category c ON ctb.category_id = c."id";
+                """;
+        try(PreparedStatement preparedStatement = this.connection.prepareStatement(query) ){
+            //Added data
+            ResultSet resultSet = preparedStatement.executeQuery();
+            while ( resultSet.next() ){
+                Book book = new Book();
+                Category category = new Category();
+                book = new Book();
+                Author author = new Author();
+                User user = new User();
+                book.setId( resultSet.getLong("id") );
+                book.setTitle( resultSet.getString("title") );
+                book.setDescription( resultSet.getString("description") );
+                category.setId( resultSet.getLong("category_id") );
+                category.setName( resultSet.getString("category_name") );
+                author.setId( resultSet.getLong("auth_id") );
+                author.setFirstName( resultSet.getString("auth_firstname") );
+                author.setLastName( resultSet.getString("auth_lastname") );
+                author.setEmail( resultSet.getString("auth_email") );
+                user.setUsername( resultSet.getString("user_username") );
+                book.setCategory(category);
+                book.setAuthor(author);
+                book.setQuantity( resultSet.getInt("quantity") );
+                book.setUser( user );
+                books.add( book );
+            }
+            return books;
+        }catch (Exception ex){
+            HelperView.error( ex.getMessage() );
+            return books;
+        }
     }
 
     @Override
@@ -442,5 +478,51 @@ public class LibrarianDaoImpl implements LibrarianDao {
     public Optional<Book> searchBookByTitle(String title) {
         return Optional.empty();
     }
+    @Override
+    public List<Book> bookPagination( int page, int limit ){
+        List<Book> books = new ArrayList<>();
+        String query = """
+                SELECT b.* ,a.email as "auth_email", a.firstname as "auth_firstname", a.lastname as "auth_lastname" , a."id" as "auth_id" ,a.firstname as "auth_firstname", a.lastname as "auth_lastname", u.username as "user_username", c."id" as "category_id", c."name" as "category_name" FROM books b
+                   INNER JOIN authors a ON a."id" = b.author_id
+                   INNER JOIN users u ON u."id" = b.user_id
+                   INNER JOIN category_book_details ctb ON ctb.book_id = b."id"
+                   INNER JOIN category c ON ctb.category_id = c."id"
+                    LIMIT ?
+                    OFFSET ?;
+                """;
+        try(PreparedStatement preparedStatement = this.connection.prepareStatement(query) ){
+            //Added data
+            preparedStatement.setInt(1, limit);
+            preparedStatement.setInt(2,  (page < 1) ? 0 : (page - 1) * limit );
+            ResultSet resultSet = preparedStatement.executeQuery();
+            while ( resultSet.next() ){
+                Book book = new Book();
+                Category category = new Category();
+                book = new Book();
+                Author author = new Author();
+                User user = new User();
+                book.setId( resultSet.getLong("id") );
+                book.setTitle( resultSet.getString("title") );
+                book.setDescription( resultSet.getString("description") );
+                category.setId( resultSet.getLong("category_id") );
+                category.setName( resultSet.getString("category_name") );
+                author.setId( resultSet.getLong("auth_id") );
+                author.setFirstName( resultSet.getString("auth_firstname") );
+                author.setLastName( resultSet.getString("auth_lastname") );
+                author.setEmail( resultSet.getString("auth_email") );
+                user.setUsername( resultSet.getString("user_username") );
+                book.setCategory(category);
+                book.setAuthor(author);
+                book.setQuantity( resultSet.getInt("quantity") );
+                book.setUser( user );
+                books.add( book );
+            }
+            return books;
+        }catch (Exception ex){
+            HelperView.error( ex.getMessage() );
+            return books;
+        }
+    }
+
 
 }

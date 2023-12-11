@@ -42,7 +42,8 @@ public class LibrarianView {
         table.addCell(" ".repeat(10) + "1. Book" + " ".repeat(10));
         table.addCell(" ".repeat(10) + "2. Author" + " ".repeat(10));
         table.addCell(" ".repeat(10) + "3. USER" + " ".repeat(10));
-        table.addCell(" ".repeat(10) + "4. LOGOUT" + " ".repeat(10));
+        table.addCell(" ".repeat(10) + "4. Backup and Recovery" + " ".repeat(10));
+        table.addCell(" ".repeat(10) + "5. Logout" + " ".repeat(10));
         System.out.println();
         System.out.println(table.render());
         System.out.println();
@@ -246,7 +247,7 @@ public class LibrarianView {
         table.addCell(" ".repeat(10) + "1. Add Book" + " ".repeat(10));
         table.addCell(" ".repeat(10) + "2. Update Book" + " ".repeat(10));
         table.addCell(" ".repeat(10) + "3. Search Book" + " ".repeat(10));
-        table.addCell(" ".repeat(10) + "4. Show Author" + " ".repeat(10));
+        table.addCell(" ".repeat(10) + "4. Show Book" + " ".repeat(10));
         table.addCell(" ".repeat(10) + "5. Exit" + " ".repeat(10));
         System.out.println();
         System.out.println(table.render());
@@ -335,5 +336,46 @@ public class LibrarianView {
         System.out.print("\t-->Enter book title : ");
         title.set( scanner.nextLine() );
     }
+
+    public void backupAndRecoveryView(LibrarianUtil librarianUtil){
+        Table table = new Table(4, BorderStyle.UNICODE_BOX_DOUBLE_BORDER_WIDE, ShownBorders.ALL);
+        table.addCell(" ".repeat(10) + "1. Backup" + " ".repeat(10));
+        table.addCell(" ".repeat(10) + "2. Recovery" + " ".repeat(10));
+        table.addCell(" ".repeat(10) + "3. Exit" + " ".repeat(10));
+        System.out.println();
+        System.out.println(table.render());
+        System.out.println();
+        System.out.print("\t-->Enter your option : ");
+        try{
+            librarianUtil.setOption( Integer.parseInt(scanner.nextLine()) );
+        }
+        catch (NumberFormatException ex){
+            System.err.println(ex.getMessage());
+            librarianUtil.setOption(0);
+        }
+    }
+
+    public void showBookMenu( LibrarianUtil librarianUtil ){
+        Table table = new Table(4, BorderStyle.UNICODE_BOX_DOUBLE_BORDER_WIDE, ShownBorders.ALL);
+        table.addCell(" ".repeat(10) + "1. Next" + " ".repeat(10));
+        table.addCell(" ".repeat(10) + "2. Previous" + " ".repeat(10));
+        table.addCell(" ".repeat(10) + "3. Goto" + " ".repeat(10));
+        table.addCell(" ".repeat(10) + "4. First" + " ".repeat(10));
+        table.addCell(" ".repeat(10) + "5. Last" + " ".repeat(10));
+        table.addCell(" ".repeat(10) + "6. Set Limit" + " ".repeat(10));
+        table.addCell(" ".repeat(10) + "7. Exit" + " ".repeat(10));
+        System.out.println();
+        System.out.println(table.render());
+        System.out.println();
+        System.out.print("\t-->Enter your option : ");
+        try{
+            librarianUtil.setOption( Integer.parseInt(scanner.nextLine()) );
+        }
+        catch (NumberFormatException ex){
+            System.err.println(ex.getMessage());
+            librarianUtil.setOption(0);
+        }
+    }
+
 
 }

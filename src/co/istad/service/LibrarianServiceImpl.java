@@ -1,5 +1,6 @@
 package co.istad.service;
 
+import co.istad.connection.ConnectionDb;
 import co.istad.dao.LibrarianDao;
 import co.istad.dao.LibrarianDaoImpl;
 import co.istad.model.Author;
@@ -8,6 +9,7 @@ import co.istad.model.Category;
 import co.istad.model.User;
 import co.istad.util.Singleton;
 
+import java.sql.Connection;
 import java.util.List;
 import java.util.Optional;
 
@@ -108,7 +110,7 @@ public class LibrarianServiceImpl implements LibrarianService{
 
     @Override
     public List<Book> getAllBook() {
-        return null;
+        return librarianDao.getAllBook();
     }
 
     @Override
@@ -123,6 +125,21 @@ public class LibrarianServiceImpl implements LibrarianService{
 
     public List<Author> authorPagination( int page, int limit ){
         return librarianDao.authorPagination(page, limit);
+    }
+
+    @Override
+    public List<Book> searchBooksByTitle(String title) {
+        return librarianDao.searchBooksByTitle( title );
+    }
+
+    @Override
+    public void backup(){
+        ConnectionDb.Backup();
+    }
+
+    @Override
+    public List<Book> bookPagination( int page, int limit ){
+        return librarianDao.bookPagination( page, limit );
     }
 
 }

@@ -26,4 +26,5 @@ public interface LibrarianDao extends MainFeatureDao {
     public List<Author> authorPagination( int page, int limit );
     public Optional<Book> searchBookByTitle(String title );
     public List<Book> searchBooksByTitle( String title );
+    public List<Book> bookPagination(int page, int limit);
 }

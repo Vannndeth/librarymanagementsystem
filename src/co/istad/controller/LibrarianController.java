@@ -49,6 +49,11 @@ public class LibrarianController {
                     System.out.println("User");
                 }
                 case 4 -> {
+                    //Backup and Recovery
+                    backupAndRecoveryPage();
+                }
+                case 5 -> {
+                    //Logout
                     HelperView.message("Logout Successfully");
                     storage.setId(null);
                     return;
@@ -277,6 +282,67 @@ public class LibrarianController {
                 }
                 case 4 -> {
                     // Show Book
+                    int totalPage = librarianService.getAllBook().size();
+                    Pagination pagination = new Pagination(1,1 , 3 );
+                    do{
+                        pagination.setTotalPage( (int)Math.ceil((float) ( totalPage / (float)pagination.getLimit() ))  );
+                        librarianView.bookView(
+                                librarianService.bookPagination( pagination.getCurrentPage(), pagination.getLimit() ),
+                                pagination.getCurrentPage(),
+                                pagination.getTotalPage(),
+                                (pagination.getLimit()),
+                                true
+                        );
+                        librarianView.showBookMenu( librarianUtil );
+                        switch ( librarianUtil.getOption() ){
+                            case 1 -> {
+                                //Next
+                                pagination.setCurrentPage( pagination.getCurrentPage() + 1 );
+                                if( pagination.getCurrentPage() > pagination.getTotalPage() ){
+                                    pagination.setCurrentPage(pagination.getTotalPage() );
+                                }
+                            }
+                            case 2 -> {
+                                //Previous
+                                pagination.setCurrentPage( pagination.getCurrentPage() - 1 );
+                                if( pagination.getCurrentPage() < 1){
+                                    pagination.setCurrentPage( 1 );
+                                }
+                            }
+                            case 3 -> {
+                                //Goto
+                                try{
+                                    System.out.print("\t-->Enter Page You're Want To Go : ");
+                                    pagination.setCurrentPage( Integer.parseInt(scanner.nextLine()) );
+                                    if( pagination.getCurrentPage() > pagination.getTotalPage() ){
+                                        pagination.setCurrentPage(pagination.getTotalPage() );
+                                    }
+                                }catch (Exception ex){
+                                    pagination.setCurrentPage( pagination.getCurrentPage() );
+                                }
+                            }
+                            case 4 -> {
+                                //First
+                                pagination.setCurrentPage( 1 );
+                            }
+                            case 5 -> {
+                                //Last
+                                pagination.setCurrentPage( pagination.getTotalPage() );
+                            }
+                            case 6 -> {
+                                // Set Limit
+                                AtomicInteger limit = new AtomicInteger();
+                                librarianView.setLimitView( limit );
+                                pagination.setLimit( limit.get() );
+                            }
+                            case 7 -> {
+                                return;
+                            }
+                            default -> {
+                                HelperView.error("Enter number above menu!");
+                            }
+                        }
+                    }while (true);
                 }
                 case 5 -> {
                     //Logout
@@ -317,7 +383,8 @@ public class LibrarianController {
                     //Search Book By Title
                     AtomicReference<String> title = new AtomicReference<>();
                     librarianView.searchBookByTitle( title );
-                    System.out.println( title.get() );
+                    List<Book> books = librarianService.searchBooksByTitle( title.get() );
+                    librarianView.bookView( books, 1,1,1, false );
                 }
                 case 3 -> {
                     //Search Book By Author
@@ -326,6 +393,32 @@ public class LibrarianController {
                     //Search Book By Category
                 }
                 case 5 -> {
+                    //Exit
+                    return;
+                }
+                default -> {
+                    HelperView.error("Please enter number above of menu!");
+                }
+            }
+        }while (true);
+    }
+
+    private void backupAndRecoveryPage(){
+        HelperView.welcome("=".repeat(50));
+        HelperView.welcome("Welcome to Backup and Recovery page");
+        HelperView.welcome("=".repeat(50));
+        do {
+            LibrarianUtil librarianUtil = new LibrarianUtil();
+            librarianView.backupAndRecoveryView( librarianUtil );
+            switch (librarianUtil.getOption()){
+                case 1 -> {
+                    //Backup
+                    librarianService.backup();
+                }
+                case 2 -> {
+                    //Recovery
+                }
+                case 3 -> {
                     //Exit
                     return;
                 }
