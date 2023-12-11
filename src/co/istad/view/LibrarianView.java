@@ -16,6 +16,7 @@ import java.util.List;
 import java.util.Scanner;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.concurrent.atomic.AtomicLong;
+import java.util.concurrent.atomic.AtomicReference;
 
 public class LibrarianView {
     private final Scanner scanner;
@@ -264,6 +265,9 @@ public class LibrarianView {
         if (books == null || books.isEmpty()){
             Table table = new Table(1, BorderStyle.UNICODE_BOX_DOUBLE_BORDER_WIDE, ShownBorders.ALL);
             table.addCell("No Book Yet!", new CellStyle(CellStyle.HorizontalAlign.CENTER));
+            System.out.println();
+            System.out.println(table.render());
+            System.out.println();
         }else{
             Table table = new Table(7, BorderStyle.UNICODE_BOX_DOUBLE_BORDER_WIDE, ShownBorders.ALL);
             table.addCell(" ".repeat(8) + "Id" + " ".repeat(8));
@@ -325,6 +329,11 @@ public class LibrarianView {
         }catch (Exception ex){
             HelperView.error("Enter only number!");
         }
+    }
+
+    public void searchBookByTitle( AtomicReference<String> title ){
+        System.out.print("\t-->Enter book title : ");
+        title.set( scanner.nextLine() );
     }
 
 }

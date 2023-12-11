@@ -6,6 +6,7 @@ import co.istad.model.Category;
 import co.istad.model.User;
 
 import java.util.List;
+import java.util.Optional;
 
 public interface LibrarianDao extends MainFeatureDao {
     public Category createCategory(Category category);
@@ -23,4 +24,6 @@ public interface LibrarianDao extends MainFeatureDao {
     public Author deleteById(Long id);
     public List<Author> searchAuthorByName(String authorName);
     public List<Author> authorPagination( int page, int limit );
+    public Optional<Book> searchBookByTitle(String title );
+    public List<Book> searchBooksByTitle( String title );
 }

@@ -17,6 +17,7 @@ import java.util.Optional;
 import java.util.Scanner;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.concurrent.atomic.AtomicLong;
+import java.util.concurrent.atomic.AtomicReference;
 
 public class LibrarianController {
     private final LibrarianView librarianView;
@@ -299,8 +300,8 @@ public class LibrarianController {
             librarianView.searchBookView( librarianUtil );
             switch (librarianUtil.getOption()){
                 case 1 -> {
-                    List<Book> books = new ArrayList<>();
                     //Search Book By Id
+                    List<Book> books = new ArrayList<>();
                     AtomicLong id = new AtomicLong();
                     librarianView.searchBookByIdView( id );
                     Optional<Book> book = librarianService.searchBookById(id.get());
@@ -314,6 +315,9 @@ public class LibrarianController {
                 }
                 case 2 -> {
                     //Search Book By Title
+                    AtomicReference<String> title = new AtomicReference<>();
+                    librarianView.searchBookByTitle( title );
+                    System.out.println( title.get() );
                 }
                 case 3 -> {
                     //Search Book By Author
