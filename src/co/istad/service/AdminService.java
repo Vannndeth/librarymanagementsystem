@@ -17,6 +17,6 @@ public interface AdminService extends MainFeatureService {
     public void getReport();
     public void resetPassword(User user);
     public void disableAccount(User user);
-    public void removeAccount(User user);
+    public void removeAccount(Long id);
     public void saveReportAsExcel();
 }

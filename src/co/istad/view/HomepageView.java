@@ -1,6 +1,7 @@
 package co.istad.view;
 
 import co.istad.model.User;
+import co.istad.util.Singleton;
 import org.nocrala.tools.texttablefmt.BorderStyle;
 import org.nocrala.tools.texttablefmt.ShownBorders;
 import org.nocrala.tools.texttablefmt.Table;
@@ -8,6 +9,10 @@ import org.nocrala.tools.texttablefmt.Table;
 import java.util.Scanner;
 
 public class HomepageView {
+    private final AdminView adminView;
+    public HomepageView(){
+        adminView = Singleton.getAdminView();
+    }
     public static void logo(){
         System.out.println("""
                                 
@@ -20,20 +25,13 @@ public class HomepageView {
                 """);
         System.out.println("WELCOME TO CSTAD LIBRARY\n");
     }
-    public int registerOption(Scanner scanner){
-        int option = 0;
-        try {
-            Table table = new Table(15, BorderStyle.UNICODE_BOX_DOUBLE_BORDER_WIDE, ShownBorders.ALL);
-            table.addCell(" 1) Sign in", 5);
-            table.addCell(" 2) Sign up", 5);
-            table.addCell(" 3) Exit", 5);
-            System.out.println(table.render());
-            System.out.print("Please choose option: ");
-            option = Integer.parseInt(scanner.nextLine());
-        }catch (NumberFormatException e){
-            HelperView.message("Please choose option above...!");
-        }
-        return option;
+    public void registerOption(Scanner scanner){
+        Table table = new Table(15, BorderStyle.UNICODE_BOX_DOUBLE_BORDER_WIDE, ShownBorders.ALL);
+        table.addCell(" 1) Sign in", 5);
+        table.addCell(" 2) Sign up", 5);
+        table.addCell(" 3) Exit", 5);
+        System.out.println(table.render());
+        System.out.println("Don't have an account? Sign up");
     }
     public void login(User user, Scanner scanner){
         System.out.print("Please enter username: ");
