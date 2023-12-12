@@ -46,6 +46,7 @@ public class AdminView {
         return option;
     }
     public void dashboardOverview(){
+        System.out.println(" ".repeat(50) + "Admin Dashboard Overview");
         Table table = new Table(4, BorderStyle.UNICODE_BOX_DOUBLE_BORDER_WIDE, ShownBorders.ALL);
         table.addCell(" ".repeat(10) + "ADMIN" + " ".repeat(10));
         table.addCell(" ".repeat(10) + "LIBRARIAN" + " ".repeat(10));

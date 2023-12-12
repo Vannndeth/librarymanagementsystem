@@ -9,7 +9,9 @@ import co.istad.view.AdminView;
 import co.istad.view.HelperView;
 import co.istad.view.HomepageView;
 
+import java.util.List;
 import java.util.Scanner;
+import java.util.concurrent.atomic.AtomicReference;
 
 public class AdminController {
 
@@ -29,9 +31,9 @@ public class AdminController {
     }
     public void adminDashboard(){
         User user = new User();
-        HelperView.welcome("=".repeat(50));
-        HelperView.welcome("Welcome to admin dashboard");
-        HelperView.welcome("=".repeat(50));
+        HelperView.welcome("=".repeat(115));
+        HelperView.welcome(" ".repeat(57) + "Welcome");
+        HelperView.welcome("=".repeat(115));
         adminView.dashboardOverview();
         do {
             int option = adminView.adminDashboardView(scanner);
@@ -67,7 +69,7 @@ public class AdminController {
                     disableAccount();
                 }
                 case 11 -> {
-                    System.out.println("lll");
+                    removeAccount();
                 }
                 case 12 -> {
                     System.out.println(";;");
@@ -120,7 +122,26 @@ public class AdminController {
         User user = new User();
         adminView.resetPasswordView(user, scanner);
         adminService.resetPassword(user);
-        HelperView.message(String.format("Account id %d reset password successfully...",user.getId()));
+        HelperView.message(String.format("Account id %d reset password successfully...!",user.getId()));
+    }
+    public void removeAccount(){
+        User user = new User();
+        String confirm;
+        Long id;
+        System.out.print("Enter account id to delete: ");
+        id = Long.parseLong(scanner.nextLine());
+        if (id.equals(user.getId())){
+            System.out.print("Are you sure you want to delete?(Y/N)");
+            confirm = scanner.nextLine();
+            if(confirm.equalsIgnoreCase("y")){
+                adminService.removeAccount(user);
+                HelperView.message(String.format("Account id %d has been removed...!",user.getId()));
+            }else {
+                HelperView.message("You has been canceled delete...!");
+            }
+        }else {
+            HelperView.message(String.format("Account id %d not found...!", id));
+        }
     }
 }
 
