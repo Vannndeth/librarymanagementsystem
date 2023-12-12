@@ -130,8 +130,17 @@ public class AdminDaoImpl implements AdminDao {
     }
 
     @Override
-    public User removeAccount(User user) {
-        return null;
+    public void removeAccount(User user) {
+        String query = """
+                     DELETE FROM users WHERE id = ?
+                """;
+        try (PreparedStatement statement = connection.prepareStatement(query)){
+            statement.setLong(1, user.getId());
+            statement.executeUpdate();
+            connection.commit();
+        } catch (SQLException e) {
+            throw new RuntimeException(e);
+        }
     }
 
     @Override

@@ -7,6 +7,7 @@ import co.istad.util.Singleton;
 
 import java.util.List;
 import java.util.Optional;
+import java.util.Scanner;
 
 public class AdminServiceImpl implements AdminService{
     private final AdminDao adminDao;
@@ -74,8 +75,9 @@ public class AdminServiceImpl implements AdminService{
     }
 
     @Override
-    public User removeAccount(User user) {
-        return null;
+    public void removeAccount(User user) {
+        adminDao.removeAccount(user);
+        System.out.println("ID:"+user.getId());
     }
 
     @Override
