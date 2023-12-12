@@ -9,8 +9,15 @@ import java.sql.DriverManager;
 import java.sql.SQLException;
 
 public class ConnectionDb {
-    private static String username = "cstadadmin";
-    private static String password = "ctad@2023";
+    /*
+    cstadadmin
+    ctad@2023
+    dbcstadlibrary
+    library.anuznomii.lol:5440
+    dbcstadlibrary
+     */
+    private static String username = "postgres";
+    private static String password = "root101001";
     private static String databaseName = "dbcstadlibrary";
     private  static String backupPath = "/home/sunlyhuor/dir/CSTAD/backups/test.sql";
     private static Connection connection;
@@ -23,7 +30,7 @@ public class ConnectionDb {
                 } catch (ClassNotFoundException e) {
                     throw new RuntimeException(e);
                 }
-                connection = DriverManager.getConnection("jdbc:postgresql://library.anuznomii.lol:5440/dbcstadlibrary", username, password);
+                connection = DriverManager.getConnection("jdbc:postgresql://localhost:5432/dblibrarycstad", username, password);
             } catch (SQLException e) {
                 throw new RuntimeException(e);
             }

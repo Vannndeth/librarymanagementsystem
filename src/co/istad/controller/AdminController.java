@@ -9,9 +9,7 @@ import co.istad.view.AdminView;
 import co.istad.view.HelperView;
 import co.istad.view.HomepageView;
 
-import java.util.List;
 import java.util.Scanner;
-import java.util.concurrent.atomic.AtomicReference;
 
 public class AdminController {
 
@@ -35,8 +33,10 @@ public class AdminController {
         HelperView.welcome(" ".repeat(57) + "Welcome");
         HelperView.welcome("=".repeat(115));
         adminView.dashboardOverview();
+        adminView.adminDashboardView(scanner);
+        again:
         do {
-            int option = adminView.adminDashboardView(scanner);
+            int option = adminView.option(scanner);
             switch (option) {
                 case 1 -> {
                     getAdminCount();
@@ -80,10 +80,13 @@ public class AdminController {
                 case 14 -> {
                     System.out.println("k");
                 }
-
-                default -> {
+                case 15 -> {
                     storage.setId(null);
                     return;
+                }
+                default -> {
+                    HelperView.message("Please choose option above...!");
+                    continue again;
                 }
             }
         }while (true);
@@ -114,34 +117,18 @@ public class AdminController {
 
     public void disableAccount(){
         User user = new User();
-        adminView.disableAccountView(user, scanner);
+        adminView.searchById(user, scanner);
         adminService.disableAccount(user);
-        HelperView.message(String.format("Account id %d disabled = %b",user.getId(), user.getDisable()));
     }
     public void resetPassword(){
         User user = new User();
-        adminView.resetPasswordView(user, scanner);
+        adminView.searchById(user, scanner);
         adminService.resetPassword(user);
-        HelperView.message(String.format("Account id %d reset password successfully...!",user.getId()));
     }
     public void removeAccount(){
         User user = new User();
-        String confirm;
-        Long id;
-        System.out.print("Enter account id to delete: ");
-        id = Long.parseLong(scanner.nextLine());
-        if (id.equals(user.getId())){
-            System.out.print("Are you sure you want to delete?(Y/N)");
-            confirm = scanner.nextLine();
-            if(confirm.equalsIgnoreCase("y")){
-                adminService.removeAccount(user);
-                HelperView.message(String.format("Account id %d has been removed...!",user.getId()));
-            }else {
-                HelperView.message("You has been canceled delete...!");
-            }
-        }else {
-            HelperView.message(String.format("Account id %d not found...!", id));
-        }
+        adminView.searchById(user, scanner);
+        adminService.removeAccount(user.getId());
     }
 }
 
