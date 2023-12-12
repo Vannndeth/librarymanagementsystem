@@ -9,9 +9,16 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.List;
+import java.util.concurrent.atomic.AtomicInteger;
 
 public class AdminUtil {
-
+    private Integer option;
+    public Integer getOption() {
+        return option;
+    }
+    public void setOption(Integer option) {
+        this.option = option;
+    }
     private final Connection connection;
     public AdminUtil(){
         connection = ConnectionDb.getConnection();
@@ -47,5 +54,4 @@ public class AdminUtil {
         }
         return userResponse;
     }
-
 }

@@ -4,8 +4,10 @@ import co.istad.connection.ConnectionDb;
 import co.istad.model.Book;
 import co.istad.model.User;
 import co.istad.util.AdminUtil;
+import co.istad.util.Helper;
 import co.istad.util.PasswordEncoder;
 import co.istad.util.Singleton;
+import co.istad.view.HelperView;
 
 import java.sql.*;
 import java.util.ArrayList;
@@ -130,16 +132,15 @@ public class AdminDaoImpl implements AdminDao {
     }
 
     @Override
-    public void removeAccount(User user) {
+    public void removeAccount(Long id) {
         String query = """
                      DELETE FROM users WHERE id = ?
                 """;
         try (PreparedStatement statement = connection.prepareStatement(query)){
-            statement.setLong(1, user.getId());
+            statement.setLong(1, id);
             statement.executeUpdate();
-            connection.commit();
         } catch (SQLException e) {
-            throw new RuntimeException(e);
+            HelperView.error(e.getMessage());
         }
     }
 

@@ -7,6 +7,8 @@ import co.istad.controller.UserController;
 import co.istad.storage.Storage;
 import co.istad.util.Seeder;
 import co.istad.util.Singleton;
+import co.istad.view.AdminView;
+import co.istad.view.HelperView;
 import co.istad.view.HomepageView;
 import java.util.Scanner;
 
@@ -19,6 +21,7 @@ public class MainApplication {
     private final LoginController loginController;
     private final SignupController signupController;
     private final HomepageView homepageView;
+    private final AdminView adminView;
     public MainApplication(){
         scanner = Singleton.scanner();
         userController = Singleton.getUserController();
@@ -31,11 +34,14 @@ public class MainApplication {
         loginController = Singleton.getLoginController();
         signupController = Singleton.getSignupController();
         homepageView = Singleton.getHomepageView();
+        adminView = Singleton.getAdminView();
     }
     public void initialize(){
         HomepageView.logo();
+        homepageView.registerOption(scanner);
+        again:
         do {
-            int option = homepageView.registerOption(scanner);
+            int option = adminView.option(scanner);
             switch (option){
                 case 1 -> {
                     loginController.login();
@@ -43,8 +49,12 @@ public class MainApplication {
                 case 2 -> {
                     signupController.signup();
                 }
-                default -> {
+                case 3 -> {
                     System.exit(0);
+                }
+                default -> {
+                    HelperView.message("Please choose option above...!");
+                    continue again;
                 }
             }
         }while (true);
