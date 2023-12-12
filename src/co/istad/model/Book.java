@@ -12,8 +12,21 @@ public class Book {
     private Author author;
     private User user;
     private BookDetail bookDetail;
+    private Category category;
 
     public Book() {
+    }
+
+    public Book(Long id, String title, Integer quantity, String description, LocalDate createdDate, Author author, User user, BookDetail bookDetail, Category category) {
+        this.id = id;
+        this.title = title;
+        this.quantity = quantity;
+        this.description = description;
+        this.createdDate = createdDate;
+        this.author = author;
+        this.user = user;
+        this.bookDetail = bookDetail;
+        this.category = category;
     }
 
     public Book(Long id, String title, Integer quantity, String description, LocalDate createdDate, Author author, User user, BookDetail bookDetail) {
@@ -26,6 +39,15 @@ public class Book {
         this.user = user;
         this.bookDetail = bookDetail;
     }
+
+    public Category getCategory() {
+        return category;
+    }
+
+    public void setCategory(Category category) {
+        this.category = category;
+    }
+
     public Book(Long id) {
         this.id = id;
     }
