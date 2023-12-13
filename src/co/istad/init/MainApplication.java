@@ -38,9 +38,9 @@ public class MainApplication {
     }
     public void initialize(){
         HomepageView.logo();
-        homepageView.registerOption(scanner);
         again:
         do {
+            homepageView.registerOption(scanner);
             int option = adminView.option(scanner);
             switch (option){
                 case 1 -> {

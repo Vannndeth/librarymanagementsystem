@@ -55,7 +55,6 @@ public interface MainFeatureDao {
             statement.setBytes(6, salt);
             int affectedRow = statement.executeUpdate();
             System.out.println("Signup successfully...!");
-            System.out.println(affectedRow);
         } catch (SQLException e) {
             System.out.println("Username already exist. " + e.getMessage());
         }
