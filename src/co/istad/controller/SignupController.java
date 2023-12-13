@@ -21,6 +21,5 @@ public class SignupController {
         user.getRole().setId(3L);
         HomepageView.signup(user, scanner);
         signupService.signup(user);
-        System.out.println(user);
     }
 }

@@ -44,7 +44,7 @@ public class AdminView {
         table.addCell("12) Save report as excel");
         table.addCell("13) Backup");
         table.addCell("14) Restore");
-        table.addCell("15) Exit");
+        table.addCell("15) Sign out");
         System.out.println(table.render());
     }
     public void dashboardOverview(){
