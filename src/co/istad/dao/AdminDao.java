@@ -19,4 +19,5 @@ public interface AdminDao extends MainFeatureDao {
     public void disableAccount(User user);
     public void removeAccount(Long id);
     public void saveReportAsExcel();
+    List<User> getLibrarianAndUser();
 }

@@ -26,10 +26,10 @@ public class HomepageView {
         System.out.println("WELCOME TO CSTAD LIBRARY\n");
     }
     public void registerOption(Scanner scanner){
-        Table table = new Table(15, BorderStyle.UNICODE_BOX_DOUBLE_BORDER_WIDE, ShownBorders.ALL);
-        table.addCell(" 1) Sign in", 5);
-        table.addCell(" 2) Sign up", 5);
-        table.addCell(" 3) Exit", 5);
+        Table table = new Table(3, BorderStyle.UNICODE_BOX_DOUBLE_BORDER_WIDE, ShownBorders.SURROUND);
+        table.addCell("    1) Sign in   ");
+        table.addCell("    2) Sign up   ");
+        table.addCell("    3) Exit   ");
         System.out.println(table.render());
         System.out.println("Don't have an account? Sign up");
     }
