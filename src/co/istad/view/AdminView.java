@@ -29,22 +29,19 @@ public class AdminView {
         return option;
     }
     public void adminDashboardView(Scanner scanner){
-        Table table = new Table(7, BorderStyle.UNICODE_BOX_DOUBLE_BORDER_WIDE, ShownBorders.ALL);
-        table.addCell("1) View total admin");
-        table.addCell("2) View total Librarian");
-        table.addCell("3) View total user");
-        table.addCell("4) View book detail");
-        table.addCell("5) View admin detail");
-        table.addCell("6) View user detail");
-        table.addCell("7) View librarian detail");
-        table.addCell("8) View report");
-        table.addCell("9) Reset password");
-        table.addCell("10) Disable account");
-        table.addCell("11) Remove account");
-        table.addCell("12) Save report as excel");
-        table.addCell("13) Backup");
-        table.addCell("14) Restore");
-        table.addCell("15) Sign out");
+        Table table = new Table(2, BorderStyle.UNICODE_BOX_DOUBLE_BORDER_WIDE, ShownBorders.SURROUND);
+        table.addCell("     1) View Admin Detail       ");
+        table.addCell("     2) View Librarian Detail     ");
+        table.addCell("     3) View User Detail     ");
+        table.addCell("     4) View Book Detail     ");
+        table.addCell("     5) Reset Password       ");
+        table.addCell("     6) Disable Account      ");
+        table.addCell("     7) Remove Account       ");
+        table.addCell("     8) Save Report as Excel     ");
+        table.addCell("     9) Backup      ");
+        table.addCell("     10) Restore      ");
+        table.addCell("     11) View Report    ");
+        table.addCell("     12) Sign Out        ");
         System.out.println(table.render());
     }
     public void dashboardOverview(){
@@ -60,22 +57,20 @@ public class AdminView {
         table.addCell(adminService.getBooksCount().toString(), new CellStyle(CellStyle.HorizontalAlign.CENTER));
         System.out.println(table.render());
     }
-
-    public void countUserView(Long count, String msg){
-        Table table = new Table(1, BorderStyle.UNICODE_BOX_DOUBLE_BORDER_WIDE, ShownBorders.ALL);
-        table.addCell(msg);
-        table.addCell(count.toString(), new CellStyle(CellStyle.HorizontalAlign.CENTER));
-        System.out.println(table.render());
-    }
-
     public void bookView(List<Book> books){
-        Table table = new Table(3, BorderStyle.UNICODE_BOX_DOUBLE_BORDER_WIDE, ShownBorders.ALL);
+        Table table = new Table(6, BorderStyle.UNICODE_BOX_DOUBLE_BORDER_WIDE, ShownBorders.ALL);
         table.addCell(" ".repeat(10) + "Id" + " ".repeat(10));
         table.addCell(" ".repeat(10) + "Title" + " ".repeat(10));
+        table.addCell(" ".repeat(10) + "Category" + " ".repeat(10));
+        table.addCell(" ".repeat(10) + "Description" + " ".repeat(10));
+        table.addCell(" ".repeat(10) + "Author" + " ".repeat(10));
         table.addCell(" ".repeat(10) + "Quantity" + " ".repeat(10));
         books.forEach(book -> {
             table.addCell(book.getId().toString(), new CellStyle(CellStyle.HorizontalAlign.CENTER));
             table.addCell(book.getTitle().toString(), new CellStyle(CellStyle.HorizontalAlign.CENTER));
+            table.addCell(book.getCategory().getName(), new CellStyle(CellStyle.HorizontalAlign.CENTER));
+            table.addCell(book.getDescription().toString(), new CellStyle(CellStyle.HorizontalAlign.CENTER));
+            table.addCell(book.getAuthor().getFirstName() + book.getAuthor().getLastName(), new CellStyle(CellStyle.HorizontalAlign.CENTER));
             table.addCell(book.getQuantity().toString(), new CellStyle(CellStyle.HorizontalAlign.CENTER));
         });
         System.out.println(table.render());
@@ -101,4 +96,5 @@ public class AdminView {
         System.out.print("Enter account id: ");
         user.setId(Long.parseLong(scanner.nextLine()));
     }
+
 }

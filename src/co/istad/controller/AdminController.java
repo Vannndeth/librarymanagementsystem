@@ -9,7 +9,10 @@ import co.istad.view.AdminView;
 import co.istad.view.HelperView;
 import co.istad.view.HomepageView;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Scanner;
+import java.util.concurrent.atomic.AtomicInteger;
 
 public class AdminController {
 
@@ -33,54 +36,45 @@ public class AdminController {
         HelperView.welcome(" ".repeat(57) + "Welcome");
         HelperView.welcome("=".repeat(115));
         adminView.dashboardOverview();
-        adminView.adminDashboardView(scanner);
         again:
         do {
+            adminView.adminDashboardView(scanner);
             int option = adminView.option(scanner);
             switch (option) {
                 case 1 -> {
-                    getAdminCount();
+                    getAllAdmin();
                 }
                 case 2 -> {
-                    getLibrarianCount();
+                    getAllLibrarian();
                 }
                 case 3 -> {
-                    getUserCount();
+                    getAllUser();
                 }
                 case 4 -> {
                     getAllBook();
                 }
                 case 5 -> {
-                    getAllAdmin();
-                }
-                case 6 -> {
-                    getAllLibrarian();
-                }
-                case 7 -> {
-                    getAllUser();
-                }
-                case 8 -> {
-                    System.out.println("");
-                }
-                case 9 -> {
                     resetPassword();
                 }
-                case 10 -> {
+                case 6 -> {
                     disableAccount();
                 }
-                case 11 -> {
+                case 7 -> {
                     removeAccount();
                 }
+                case 8 -> {
+                    saveReportExcel();
+                }
+                case 9 -> {
+                    backup();
+                }
+                case 10 -> {
+                    restore();
+                }
+                case 11 -> {
+                    viewReport();
+                }
                 case 12 -> {
-                    System.out.println(";;");
-                }
-                case 13 -> {
-                    System.out.println("pp");
-                }
-                case 14 -> {
-                    System.out.println("k");
-                }
-                case 15 -> {
                     storage.setId(null);
                     return;
                 }
@@ -91,44 +85,124 @@ public class AdminController {
             }
         }while (true);
     }
-
-    public void getAdminCount(){
-        Long adminCount = adminService.getAdminCount();
-        adminView.countUserView(adminCount, "Total Admin");
-    }
-    public void getLibrarianCount(){
-        Long userCount = adminService.getLibrarianCount();
-        adminView.countUserView(userCount,"Total Librarian");
-    }
-    public void getUserCount(){
-        Long librarianCount = adminService.getUserCount();
-        adminView.countUserView(librarianCount, "Total User");
-    }
     public void getAllBook(){
         adminView.bookView(adminService.getAllBook());
     }
     public void getAllAdmin(){
         adminView.usersView(adminService.getAllAdmin());
-    }public void getAllLibrarian(){
+    }
+    public void getAllLibrarian(){
         adminView.usersView(adminService.getAllLibrarian());
-    }public void getAllUser(){
+    }
+    public void getAllUser(){
         adminView.usersView(adminService.getAllUser());
     }
 
     public void disableAccount(){
         User user = new User();
         adminView.searchById(user, scanner);
-        adminService.disableAccount(user);
+        List<User> users = adminService.getLibrarianAndUser();
+        final String[] confirm = {""};
+        AtomicInteger found = new AtomicInteger();
+        found.set(0);
+        users.forEach(u -> {
+            if (u.getId().equals(user.getId())) {
+                HelperView.message(String.format("Account %d Information",u.getId()));
+                List<User> userViews = new ArrayList<>();
+                userViews.add(u);
+                adminView.usersView(userViews);
+                System.out.print("Set account disable: ");
+                user.setDisable(Boolean.parseBoolean(scanner.nextLine()));
+                System.out.print("Are you sure you want to disable?(Y/N): ");
+                confirm[0] = scanner.nextLine();
+                if (confirm[0].equalsIgnoreCase("y")) {
+                    adminService.disableAccount(user);
+                    HelperView.message(String.format("Account id %d disabled = %b",user.getId(), user.getDisable()));
+                    found.set(1);
+                } else {
+                    HelperView.message("You has been canceled disable account...!");
+                    found.set(2);
+                }
+            }
+        });
+        if (found.get() == 0){
+            HelperView.message(String.format("Account id %d not found...!", user.getId()));
+        }
     }
     public void resetPassword(){
         User user = new User();
         adminView.searchById(user, scanner);
-        adminService.resetPassword(user);
+        List<User> users = adminService.getLibrarianAndUser();
+        final String[] confirm = {""};
+        AtomicInteger found = new AtomicInteger();
+        found.set(0);
+        users.forEach(u -> {
+            if (u.getId().equals(user.getId())) {
+                HelperView.message(String.format("Account %d Information",u.getId()));
+                List<User> userViews = new ArrayList<>();
+                userViews.add(u);
+                adminView.usersView(userViews);
+                System.out.print("Set new password: ");
+                user.setPassword(scanner.nextLine());
+                System.out.print("Are you sure you want to reset new password?(Y/N): ");
+                confirm[0] = scanner.nextLine();
+                if (confirm[0].equalsIgnoreCase("y")) {
+                    adminService.resetPassword(user);
+                    HelperView.message(String.format("Account id %d has been reset new password...!", user.getId()));
+                    found.set(1);
+                } else {
+                    HelperView.message("You has been canceled reset new password...!");
+                    found.set(2);
+                }
+            }
+        });
+        if (found.get() == 0){
+            HelperView.message(String.format("Account id %d not found...!", user.getId()));
+        }
     }
     public void removeAccount(){
         User user = new User();
         adminView.searchById(user, scanner);
-        adminService.removeAccount(user.getId());
+        List<User> users = adminService.getLibrarianAndUser();
+        final String[] confirm = {""};
+        AtomicInteger found = new AtomicInteger();
+        found.set(0);
+        users.forEach(u -> {
+            if (user.getId().equals(u.getId())) {
+                HelperView.message(String.format("Account %d Information",u.getId()));
+                List<User> userViews = new ArrayList<>();
+                userViews.add(u);
+                adminView.usersView(userViews);
+                System.out.print("Are you sure you want to remove?(Y/N): ");
+                confirm[0] = scanner.nextLine();
+                if (confirm[0].equalsIgnoreCase("y")) {
+                    adminService.removeAccount(user.getId());
+                    HelperView.message(String.format("Account id %d has been removed...!", user.getId()));
+                    found.set(1);
+                } else {
+                    HelperView.message("You has been canceled remove...!");
+                    found.set(2);
+                }
+            }
+        });
+        if (found.get() == 0){
+            HelperView.message(String.format("Account id %d not found...!", user.getId()));
+        }
+    }
+    public void getLibrarianAndUser(){
+        adminView.usersView(adminService.getLibrarianAndUser());
+    }
+    public void saveReportExcel(){
+
+    }
+    public void backup(){
+
+    }
+    public void restore(){
+
+    }
+    public void viewReport(){
+
     }
 }
 
