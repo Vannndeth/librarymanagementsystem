@@ -3,10 +3,7 @@ package co.istad.service;
 import co.istad.connection.ConnectionDb;
 import co.istad.dao.LibrarianDao;
 import co.istad.dao.LibrarianDaoImpl;
-import co.istad.model.Author;
-import co.istad.model.Book;
-import co.istad.model.Category;
-import co.istad.model.User;
+import co.istad.model.*;
 import co.istad.util.Singleton;
 
 import java.sql.Connection;
@@ -39,8 +36,8 @@ public class LibrarianServiceImpl implements LibrarianService{
     }
 
     @Override
-    public Boolean confirmBorrow(User user, Book book) {
-        return null;
+    public Boolean confirmBorrow( Borrow borrow ) {
+        return librarianDao.confirmBorrow(borrow);
     }
 
     @Override

@@ -1,8 +1,6 @@
 package co.istad.view;
 
-import co.istad.model.Author;
-import co.istad.model.Book;
-import co.istad.model.Category;
+import co.istad.model.*;
 import co.istad.service.LibrarianService;
 import co.istad.util.Helper;
 import co.istad.util.LibrarianUtil;
@@ -248,7 +246,8 @@ public class LibrarianView {
         table.addCell(" ".repeat(10) + "2. Update Book" + " ".repeat(10));
         table.addCell(" ".repeat(10) + "3. Search Book" + " ".repeat(10));
         table.addCell(" ".repeat(10) + "4. Show Book" + " ".repeat(10));
-        table.addCell(" ".repeat(10) + "5. Exit" + " ".repeat(10));
+        table.addCell(" ".repeat(10) + "5. Borrow Book" + " ".repeat(10));
+        table.addCell(" ".repeat(10) + "6. Exit" + " ".repeat(10));
         System.out.println();
         System.out.println(table.render());
         System.out.println();
@@ -377,5 +376,33 @@ public class LibrarianView {
         }
     }
 
+    public void confirmBookView(Borrow borrow){
+
+        try{
+            System.out.print("\t-->Enter borrow id : ");
+            borrow.setId( Long.parseLong(scanner.nextLine()) );
+        }catch ( Exception ex ){
+            HelperView.error( "Enter only number!" );
+        }
+
+    }
+
+    public void borrowMenu( LibrarianUtil librarianUtil ){
+        Table table = new Table(4, BorderStyle.UNICODE_BOX_DOUBLE_BORDER_WIDE, ShownBorders.ALL);
+        table.addCell(" ".repeat(10) + "1. List Borrow" + " ".repeat(10));
+        table.addCell(" ".repeat(10) + "2. Confirm Borrow" + " ".repeat(10));
+        table.addCell(" ".repeat(10) + "3. Exit" + " ".repeat(10));
+        System.out.println();
+        System.out.println(table.render());
+        System.out.println();
+        System.out.print("\t-->Enter your option : ");
+        try{
+            librarianUtil.setOption( Integer.parseInt(scanner.nextLine()) );
+        }
+        catch (NumberFormatException ex){
+            System.err.println(ex.getMessage());
+            librarianUtil.setOption(0);
+        }
+    }
 
 }

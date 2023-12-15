@@ -1,9 +1,6 @@
 package co.istad.service;
 
-import co.istad.model.Author;
-import co.istad.model.Book;
-import co.istad.model.Category;
-import co.istad.model.User;
+import co.istad.model.*;
 
 import java.util.List;
 
@@ -12,7 +9,7 @@ public interface LibrarianService extends MainFeatureService {
     public Category updateCategoryById(Long id, Category category);
     public Book createBook(Book book);
     public Book updateBookById(Long id, Book book);
-    public Boolean confirmBorrow(User user, Book book);
+    public Boolean confirmBorrow(Borrow borrow);
     public Boolean returnBook(User user, Book book);
     public List<Book> bookReport();
     public List<User> userReport();

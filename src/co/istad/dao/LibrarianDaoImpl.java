@@ -131,9 +131,127 @@ public class LibrarianDaoImpl implements LibrarianDao {
         }
     }
 
+
     @Override
-    public Boolean confirmBorrow(User user, Book book) {
-        return null;
+    public Boolean confirmBorrow(Borrow borrow) {
+        String selectBorrow = """
+            SELECT * FROM borrow WHERE id = ?;
+            """;
+        String selectBorrowWhichConfirm = """
+            SELECT * FROM borrow WHERE id = ? AND is_borrow = true;
+            """;
+        String queryUpdateBook = """
+            UPDATE books
+            SET quantity = quantity - ?
+            WHERE id = ?;
+    """;
+        String queryUpdateBorrow = """
+            UPDATE borrow
+            SET is_borrow = true
+            WHERE id = ?
+            """;
+        String querySelectBook = """
+                SELECT * FROM books WHERE id = ?;
+                """;
+        try (
+                PreparedStatement preparedStatement = this.connection.prepareStatement(queryUpdateBook);
+                PreparedStatement preparedStatement1 = this.connection.prepareStatement(queryUpdateBorrow);
+                PreparedStatement preparedStatement2 = this.connection.prepareStatement(selectBorrow);
+                PreparedStatement preparedStatement3 = this.connection.prepareStatement(selectBorrowWhichConfirm);
+                PreparedStatement preparedStatement4 = this.connection.prepareStatement(querySelectBook);
+        ) {
+            this.connection.setAutoCommit(false);
+
+            Borrow borrowRes = null;
+            Book bookRes = null;
+            User userRes = null;
+            // Add Data
+            preparedStatement2.setLong(1, borrow.getId());
+            ResultSet selectBookResult = preparedStatement2.executeQuery();
+
+            while (selectBookResult.next()) {
+                borrowRes = new Borrow();
+                User user = new User();
+                Book book = new Book();
+                borrowRes.setId(selectBookResult.getLong("id"));
+                user.setId(selectBookResult.getLong("user_id"));
+                borrowRes.setUser(user);
+                book.setId(selectBookResult.getLong("book_id"));
+                borrowRes.setBook(book);
+                borrowRes.setId(selectBookResult.getLong("id"));
+                borrowRes.setQuantity( selectBookResult.getInt("book_quantity") );
+            }
+
+            if (borrowRes == null) {
+                HelperView.error("The borrow id does not exist!");
+                return false;
+            }
+
+            preparedStatement4.setLong( 1, borrowRes.getBook().getId() );
+            ResultSet selectBookResultSet = preparedStatement4.executeQuery();
+
+            while ( selectBookResultSet.next() ){
+                bookRes = new Book();
+                bookRes.setId(selectBookResultSet.getLong("id"));
+                bookRes.setQuantity(selectBookResultSet.getInt("quantity"));
+            }
+
+            if( bookRes == null ){
+                HelperView.error("No this book in our system!");
+                return false;
+            }else{
+                if( bookRes.getQuantity() < borrowRes.getQuantity() ){
+                    HelperView.error("Not enough book quantity for you borrow!");
+                    return false;
+                }
+            }
+
+            preparedStatement3.setLong(1, borrow.getId());
+            ResultSet selectBorrowConfirm = preparedStatement3.executeQuery();
+            Borrow selectBookIsBorrow = null;
+
+            if (selectBorrowConfirm.next()) {
+                selectBookIsBorrow = new Borrow();
+                User user = new User();
+                Book book = new Book();
+                selectBookIsBorrow.setId(selectBorrowConfirm.getLong("id"));
+                user.setId(selectBorrowConfirm.getLong("user_id"));
+                selectBookIsBorrow.setUser(user);
+                book.setId(selectBorrowConfirm.getLong("book_id"));
+                selectBookIsBorrow.setBook(book);
+                selectBookIsBorrow.setId(selectBorrowConfirm.getLong("id"));
+            }
+
+            if (selectBookIsBorrow != null) {
+                HelperView.error("This user is borrowing this book and has not returned it yet!");
+                return false;
+            }
+
+            // Added Data
+            preparedStatement1.setLong(1, borrow.getId());
+            preparedStatement1.executeUpdate();
+
+            // Add Data
+            preparedStatement.setInt(1, borrowRes.getQuantity());
+            preparedStatement.setLong(2, borrowRes.getBook().getId());
+            preparedStatement.executeUpdate();
+
+            this.connection.commit();
+
+            return true;
+
+        } catch (SQLException ex) {
+            try {
+                this.connection.rollback();
+            } catch (SQLException exc) {
+                System.out.println(exc);
+                // HelperView.error( exc.getMessage() );
+                return false;
+            }
+            System.out.println(ex);
+            // HelperView.error(ex.getMessage());
+            return false;
+        }
     }
 
     @Override
@@ -524,5 +642,29 @@ public class LibrarianDaoImpl implements LibrarianDao {
         }
     }
 
+    @Override
+    public List<Borrow> borrowPagination( int page, int limit ){
+        List<Borrow> borrows = new ArrayList<>();
+        String query = """
+                SELECT * FROM borrow
+                LIMIT ?
+                OFFSET ?;
+                """;
+        try(PreparedStatement preparedStatement = this.connection.prepareStatement( query )){
+            preparedStatement.setInt(1, limit );
+            preparedStatement.setInt(2, page );
+            ResultSet resultSet = preparedStatement.executeQuery();
+            while ( resultSet.next() ){
+                Borrow borrow = new Borrow();
+
+            }
+
+            return borrows;
+        }
+        catch(Exception ex){
+            HelperView.error(ex.getMessage());
+            return borrows;
+        }
+    }
 
 }

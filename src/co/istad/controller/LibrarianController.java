@@ -2,6 +2,7 @@ package co.istad.controller;
 
 import co.istad.model.Author;
 import co.istad.model.Book;
+import co.istad.model.Borrow;
 import co.istad.service.LibrarianService;
 import co.istad.storage.Storage;
 import co.istad.util.Helper;
@@ -345,8 +346,11 @@ public class LibrarianController {
                     }while (true);
                 }
                 case 5 -> {
-                    //Logout
-                    storage.setId(null);
+                    // Borrow Page
+                    borrowPage();
+                }
+                case 6 -> {
+                    //Exit
                     return;
                 }
                 default -> {
@@ -429,4 +433,43 @@ public class LibrarianController {
         }while (true);
     }
 
+    private void borrowPage(){
+        HelperView.welcome("=".repeat(50));
+        HelperView.welcome("Welcome to Borrow page");
+        HelperView.welcome("=".repeat(50));
+        do {
+            LibrarianUtil librarianUtil = new LibrarianUtil();
+            librarianView.borrowMenu( librarianUtil );
+            switch (librarianUtil.getOption()){
+                case 1 -> {
+                    //Lists All Borrow
+
+                }
+                case 2 -> {
+                    //Confirm Borrow
+                    Borrow borrow = new Borrow();
+                    librarianView.confirmBookView( borrow );
+                    System.out.print( String.format("Are you want to confirm this borrow id %s ?", borrow.getId()) );
+                    Character opt = scanner.nextLine().charAt(0);
+                    switch (opt.toString().toLowerCase()){
+                        case "y" -> {
+                            if( librarianService.confirmBorrow( borrow ) ){
+                                HelperView.message("Confirm Successfully");
+                            }
+                        }
+                        case "c" -> {
+                            HelperView.error("Canceled");
+                        }
+                    }
+                }
+                case 3 -> {
+                    //Exit
+                    return;
+                }
+                default -> {
+                    HelperView.error("Please enter number above of menu!");
+                }
+            }
+        }while (true);
+    }
 }
