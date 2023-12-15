@@ -1,8 +1,7 @@
 package co.istad.dao;
 
 import co.istad.connection.ConnectionDb;
-import co.istad.model.Book;
-import co.istad.model.User;
+import co.istad.model.*;
 import co.istad.util.AdminUtil;
 import co.istad.util.Helper;
 import co.istad.util.PasswordEncoder;
@@ -150,6 +149,16 @@ public class AdminDaoImpl implements AdminDao {
     }
 
     @Override
+    public List<User> getLibrarianAndUser() {
+        List<User> userResponse = new ArrayList<>();
+        String query = """
+                    SELECT u.*, r.name AS role FROM users u
+                    INNER JOIN roles r ON u.role_id = r.id WHERE role_id IN (2, 3)
+                """;
+        return adminUtil.getUsers(userResponse, query);
+    }
+
+    @Override
     public Optional<Book> searchBookById(Long id) {
         return Optional.empty();
     }
@@ -172,22 +181,40 @@ public class AdminDaoImpl implements AdminDao {
     @Override
     public List<Book> getAllBook() {
         List<Book> booksResp = new ArrayList<>();
+        BookDetail bookDetail = new BookDetail();
+        Category category = new Category();
         String query = """
-           SELECT * FROM books;
-        """;
+                    SELECT b.*, c."id" as "cate_id", c.name as "category", a.firstname, a.lastname FROM books b INNER JOIN category_book_details cb ON b."id" = cb.book_id INNER JOIN category c ON c."id" = cb.category_id INNER JOIN authors a ON a."id" = b.author_id;
+                """;
         try ( PreparedStatement preparedStatement = this.connection.prepareStatement(query)) {
             ResultSet rs = preparedStatement.executeQuery();
             while (rs.next()) {
+                Author authorRes = new Author();
+
                 Book bookRes = new Book();
-                bookRes.setId(rs.getLong("id"));
+                category.setId( rs.getLong( "cate_id" ) );
+                category.setName( rs.getString("category") );
+                bookDetail.setCategory( category );
+                bookRes.setBookDetail(bookDetail);
+                authorRes.setFirstName(rs.getString("firstname"));
+                authorRes.setLastName(rs.getString("lastname"));
+
+                Category category1 = new Category();
+                category1.setName(rs.getString("category"));
+                bookRes.setId( rs.getLong("id") );
                 bookRes.setTitle(rs.getString("title"));
-                bookRes.setQuantity(rs.getInt("Quantity"));
+                bookRes.setCategory(category1);
+                bookRes.setDescription(rs.getString("description"));
+                bookRes.setBookDetail(bookDetail);
+                bookRes.setQuantity(rs.getInt("quantity"));
+                bookRes.setAuthor(authorRes);
                 booksResp.add(bookRes);
             }
         } catch (SQLException e) {
             throw new RuntimeException(e);
         }
         return booksResp;
+
     }
 
     @Override
