@@ -21,7 +21,6 @@ public class UserDaoImpl implements UserDao {
         connection = ConnectionDb.getConnection();
     }
 
-
     @Override
     public Optional<Book> searchBookById(Long id) {
         Book bookRes = new Book();
@@ -85,7 +84,6 @@ public class UserDaoImpl implements UserDao {
         }
         return Optional.empty();
     }
-
     @Override
     public Optional<List<Book>> searchBookByAuthor(String author) {
         List<Book> booksResp = new ArrayList<>();
@@ -119,7 +117,6 @@ public class UserDaoImpl implements UserDao {
             throw new RuntimeException(e);
         }
     }
-
     @Override
     public Optional<List<Book>> searchBookByCategory(String category) {
         List<Book> booksResp = new ArrayList<>();
@@ -155,25 +152,40 @@ public class UserDaoImpl implements UserDao {
 
     @Override
     public List<Book> getAllBook() {
-        List<Book> booksResp = new ArrayList<>();
+        List<Book> books = new ArrayList<>();
         String query = """
-           SELECT * FROM books;
-        """;
-        try ( PreparedStatement preparedStatement = this.connection.prepareStatement(query)) {
+       SELECT b.*, c."id" as "cate_id", c.name, a.firstname, a.lastname FROM books b INNER JOIN category_book_details cb ON b."id" = cb.book_id INNER JOIN category c ON c."id" = cb.category_id INNER JOIN authors a ON a."id" = b.author_id
+    """;
+        try (PreparedStatement preparedStatement = this.connection.prepareStatement(query)) {
             ResultSet rs = preparedStatement.executeQuery();
             while (rs.next()) {
-                Book bookRes = new Book();
+                Book bookRes = new Book();  // Create a new Book object for each iteration
+
+                Category category = new Category();
+                category.setId(rs.getLong("cate_id"));
+                category.setName(rs.getString("name"));
+
+                BookDetail bookDetail = new BookDetail();
+                bookDetail.setCategory(category);
+
+                Author authorRes = new Author();
+                authorRes.setFirstName(rs.getString("firstname"));
+                authorRes.setLastName(rs.getString("lastname"));
+
+                bookRes.setBookDetail(bookDetail);
                 bookRes.setId(rs.getLong("id"));
+                bookRes.setDescription(rs.getString("description"));
                 bookRes.setTitle(rs.getString("title"));
-                bookRes.setQuantity(rs.getInt("Quantity"));
-                booksResp.add(bookRes);
+                bookRes.setQuantity(rs.getInt("quantity"));
+                bookRes.setAuthor(authorRes);
+                books.add(bookRes);
             }
         } catch (SQLException e) {
             throw new RuntimeException(e);
         }
-        return booksResp;
-
+        return books;
     }
+
 
     @Override
     public Optional<User> searchUserById(Long id) {
@@ -246,25 +258,21 @@ public class UserDaoImpl implements UserDao {
 
     @Override
     public Borrow borrowBook(Long id) {
-
-        Borrow borrow = new Borrow();
-        String query = "INSERT INTO borrow  (user_id, book_id, book_quantity ,start_borrow_date, deadline_borrow_date ) VALUES (?, ?, ?, CURRENT_TIMESTAMP, CURRENT_TIMESTAMP + INTERVAL '7' DAY  )";
+        String query = "INSERT INTO borrow  (user_id, book_id, book_quantity ,start_borrow_date, deadline_borrow_date ) VALUES (?, ? , ?, CURRENT_TIMESTAMP, CURRENT_TIMESTAMP + INTERVAL '7' DAY  )";
         try(PreparedStatement statement = this.connection.prepareStatement(query)) {
             statement.setLong(1, storage.getId() );
             statement.setLong(2, id);
-            statement.setInt(3, 3);
+            statement.setLong(3, 1);
             statement.executeUpdate();
         } catch (SQLException e) {
-            System.out.println("Username already exist. " + e.getMessage());
+            System.out.println("Not ID Was Found " + e.getMessage());
         }
-        return borrow;
-
-
+        return null;
     }
+
 
     @Override
     public List<Borrow> bookHistory() {
-
         List<Borrow> borrowList = new ArrayList<>();
         String query = "SELECT  b.id, b.title , bw.is_borrow, bw.start_borrow_date, bw.deadline_borrow_date  FROM borrow bw INNER JOIN books b ON bw.book_id = b.id WHERE bw.user_id = ?";
         try (PreparedStatement preparedStatement = ConnectionDb.getConnection().prepareStatement(query)) {
@@ -285,6 +293,100 @@ public class UserDaoImpl implements UserDao {
             throw new RuntimeException(e);
         }
         return borrowList;
+    }
+
+    @Override
+    public List<Borrow> borrowHistory() {
+        List<Borrow> borrowList = new ArrayList<>();
+       String query = """
+                 select bk.id , bk.title, bw.start_borrow_date, bw.deadline_borrow_date from borrow bw inner join books bk on bw.book_id = bk.id where bw.is_return = false
+               """;
+        try(PreparedStatement statement = this.connection.prepareStatement(query)) {
+            ResultSet rs =statement.executeQuery();
+            while (rs.next()) {
+                Borrow borrow = new Borrow();
+                borrow.setBorrowDate(rs.getTimestamp("start_borrow_date").toLocalDateTime().toLocalDate());
+                borrow.setDeadline(rs.getTimestamp("deadline_borrow_date").toLocalDateTime().toLocalDate());
+                Book book = new Book();
+                borrow.setBook(book);
+                book.setTitle(rs.getString("title"));
+                book.setId(rs.getLong("id"));
+                borrowList.add(borrow);
+            }
+        } catch (SQLException e) {
+            System.out.println("No Book Borrow " + e.getMessage());
+        }
+        return borrowList ;
+    }
+
+    @Override
+    public Return bookReturn(Long id ) {
+        String query = """
+                SELECT * FROM borrow bw where bw.book_id = ? AND bw.user_id = ? AND bw.is_return = false;
+                """;
+        try ( PreparedStatement preparedStatement = this.connection.prepareStatement(query)) {
+            preparedStatement.setLong(1,id);
+            preparedStatement.setLong(2, storage.getId());
+            preparedStatement.executeQuery();
+        } catch (SQLException e) {
+            throw new RuntimeException(e);
+        }
+        return null;
+    }
+    public List<Borrow> allBorrow(){
+        List<Borrow> borrowList = new ArrayList<>();
+        String query = """
+                SELECT * FROM borrow bw WHERE bw.user_id = ? AND is_return = false;
+                """;
+        try ( PreparedStatement preparedStatement = this.connection.prepareStatement(query)) {
+                preparedStatement.setLong(1 , storage.getId());
+             ResultSet rs = preparedStatement.executeQuery();
+             while (rs.next()) {
+                 Borrow borrow = new Borrow();
+                 Book book = new Book();
+                 book.setId( rs.getLong("book_id"));
+                 borrow.setBook(book);
+                 borrowList.add(borrow);
+             }
+
+        } catch (SQLException e) {
+            throw new RuntimeException(e);
+        }
+        return borrowList;
+    }
+
+    @Override
+    public Return returnBook(long id) {
+        String query = """
+                INSERT INTO return (borrow_id)
+                VALUES (
+                    (SELECT id FROM borrow WHERE book_id = ?)
+                );
+                """;
+        try ( PreparedStatement preparedStatement = this.connection.prepareStatement(query)) {
+            preparedStatement.setLong(1,id);
+            preparedStatement.executeUpdate();
+        } catch (SQLException e) {
+            throw new RuntimeException(e);
+        }
+        return null;
+    }
+
+    @Override
+    public int countBorrowBook() {
+        String query = """
+                SELECT COUNT(*) FROM borrow bw WHERE bw.is_return = false
+                """;
+        try ( PreparedStatement preparedStatement = this.connection.prepareStatement(query)) {
+            preparedStatement.executeQuery();
+            ResultSet resultSet = preparedStatement.executeQuery();
+            if (resultSet.next()) {
+                return resultSet.getInt(1);
+            }
+        } catch (SQLException e) {
+            throw new RuntimeException(e);
+        }
+        return 0;
     }
 
 }

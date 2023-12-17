@@ -4,6 +4,7 @@
       <root url="jar://$PROJECT_DIR$/../../../../Library/FileJar/text-table-formatter-1.2.4.jar!/" />
       <root url="jar://$PROJECT_DIR$/../../../../Library/FileJar/postgresql-42.6.0.jar!/" />
       <root url="jar://$PROJECT_DIR$/../../jar/text-table-formatter-1.2.4.jar!/" />
+      <root url="jar://$PROJECT_DIR$/../../text-table-formatter-1.2.4.jar!/" />
     </CLASSES>
     <JAVADOC />
     <SOURCES />
