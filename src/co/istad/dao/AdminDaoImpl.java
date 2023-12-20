@@ -184,7 +184,9 @@ public class AdminDaoImpl implements AdminDao {
         BookDetail bookDetail = new BookDetail();
         Category category = new Category();
         String query = """
-                    SELECT b.*, c."id" as "cate_id", c.name as "category", a.firstname, a.lastname FROM books b INNER JOIN category_book_details cb ON b."id" = cb.book_id INNER JOIN category c ON c."id" = cb.category_id INNER JOIN authors a ON a."id" = b.author_id;
+                    SELECT b.*, c."id" as "cate_id", c.name as "category", a.firstname, a.lastname FROM books b 
+                    INNER JOIN category_book_details cb ON b."id" = cb.book_id INNER JOIN category c ON c."id" = cb.category_id 
+                    INNER JOIN authors a ON a."id" = b.author_id WHERE quantity > 0
                 """;
         try ( PreparedStatement preparedStatement = this.connection.prepareStatement(query)) {
             ResultSet rs = preparedStatement.executeQuery();
