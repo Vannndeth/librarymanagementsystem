@@ -1,5 +1,6 @@
 package co.istad.controller;
 
+import co.istad.model.Book;
 import co.istad.model.User;
 import co.istad.service.AdminService;
 import co.istad.service.LoginService;
@@ -31,7 +32,6 @@ public class AdminController {
         homepageView = Singleton.getHomepageView();
     }
     public void adminDashboard(){
-        User user = new User();
         HelperView.welcome("=".repeat(115));
         HelperView.welcome(" ".repeat(57) + "Welcome");
         HelperView.welcome("=".repeat(115));
@@ -85,9 +85,6 @@ public class AdminController {
             }
         }while (true);
     }
-    public void getAllBook(){
-        adminView.bookView(adminService.getAllBook());
-    }
     public void getAllAdmin(){
         adminView.usersView(adminService.getAllAdmin());
     }
@@ -95,9 +92,81 @@ public class AdminController {
         adminView.usersView(adminService.getAllLibrarian());
     }
     public void getAllUser(){
-        adminView.usersView(adminService.getAllUser());
+        int currentPage = 1;
+        int rowPerPage = 3;
+        adminView.usersView(adminService.getAllUser(), rowPerPage, currentPage);
+        again:
+        do {
+            adminView.paginationOption();
+            System.out.print("Command ———> ");
+            String option=scanner.nextLine();
+            switch (option.toUpperCase()){
+                case "D" -> {
+                    adminView.usersView(adminService.getAllUser(), rowPerPage, currentPage);
+                }
+                case "F" -> {
+                    currentPage = first(adminService.getAllUser(), rowPerPage, currentPage);
+                }
+                case "P" -> {
+                    currentPage = previous(adminService.getAllUser(), rowPerPage, currentPage);
+                }
+                case "N" -> {
+                    currentPage = next(adminService.getAllUser(), rowPerPage, currentPage);
+                }
+                case "L" -> {
+                    currentPage = last(adminService.getAllUser(), rowPerPage, currentPage);
+                }
+                case "SE" -> {
+                    rowPerPage = setRecord();
+                }
+                case "M" -> {
+                    return;
+                }
+                default -> {
+                    HelperView.message("Please choose option above...!");
+                    continue again;
+                }
+            }
+        }while (true);
     }
-
+    public void getAllBook(){
+        int currentPage = 1;
+        int rowPerPage = 3;
+        adminView.bookView(adminService.getAllBook(), rowPerPage, currentPage);
+        again:
+        do {
+            adminView.paginationOption();
+            System.out.print("Command ———> ");
+            String option=scanner.nextLine();
+            switch (option.toUpperCase()){
+                case "D" -> {
+                    adminView.bookView(adminService.getAllBook(), rowPerPage, currentPage);
+                }
+                case "F" -> {
+                    currentPage = firstBook(adminService.getAllBook(), rowPerPage, currentPage);
+                }
+                case "P" -> {
+                    currentPage = previousBook(adminService.getAllBook(), rowPerPage, currentPage);
+                }
+                case "N" -> {
+                    currentPage = nextBook(adminService.getAllBook(), rowPerPage, currentPage);
+                }
+                case "L" -> {
+                    currentPage = lastBook(adminService.getAllBook(), rowPerPage, currentPage);
+                }
+                case "SE" -> {
+                    rowPerPage = setRecordBook();
+                }
+                case "M" -> {
+                    return;
+                }
+                default -> {
+                    HelperView.message("Please choose option above...!");
+                    continue again;
+                }
+            }
+        }while (true);
+    }
     public void disableAccount(){
         User user = new User();
         adminView.searchById(user, scanner);
@@ -107,7 +176,7 @@ public class AdminController {
         found.set(0);
         users.forEach(u -> {
             if (u.getId().equals(user.getId())) {
-                HelperView.message(String.format("Account %d Information",u.getId()));
+                HelperView.message(String.format("Account id %d Information",u.getId()));
                 List<User> userViews = new ArrayList<>();
                 userViews.add(u);
                 adminView.usersView(userViews);
@@ -203,6 +272,106 @@ public class AdminController {
     }
     public void viewReport(){
 
+    }
+
+    public int first(List<User> users, int rowPerPage, int currentPage) {
+        if (currentPage == 1) {
+            HelperView.message("Now you stand on the first page...!");
+            adminView.usersView(users, rowPerPage, currentPage);
+        } else {
+            currentPage = 1;
+            adminView.usersView(users, rowPerPage, currentPage);
+        }
+        return currentPage;
+    }
+    public int previous(List<User> users, int rowPerPage, int currentPage) {
+        if (currentPage > 1) {
+            currentPage--;
+            adminView.usersView(users, rowPerPage, currentPage);
+        }else {
+            currentPage = (int) Math.ceil((double) adminService.getAllUser().size() / rowPerPage);
+            adminView.usersView(users, rowPerPage, currentPage);
+        }
+        return currentPage;
+    }
+    public int next(List<User> users, int rowPerPage, int currentPage) {
+        int totalPages = (int) Math.ceil((double) adminService.getAllUser().size() / rowPerPage);
+        if (currentPage < totalPages) {
+            currentPage++;
+            adminView.usersView(users, rowPerPage, currentPage);
+        }else {
+            currentPage = 1;
+            adminView.usersView(users, rowPerPage, currentPage);
+        }
+        return currentPage;
+    }
+    public int last(List<User> users, int rowPerPage, int currentPage) {
+        int totalPages = (int) Math.ceil((double) adminService.getAllUser().size() / rowPerPage);
+        if (currentPage == totalPages) {
+            HelperView.message("Now you stand on the last page...!");
+            adminView.usersView(users, rowPerPage, currentPage);
+        } else {
+            currentPage = totalPages;
+            adminView.usersView(users, rowPerPage, currentPage);
+        }
+        return currentPage;
+    }
+    public int setRecord(){
+        Scanner sc = new Scanner(System.in);
+        System.out.print("Please enter record for display: ");
+        int record = Integer.parseInt(sc.nextLine());
+        HelperView.message(String.format("    Set page to %d record successfully...!    ",record));
+        return record;
+    }
+
+    public int firstBook(List<Book> books, int rowPerPage, int currentPage) {
+        if (currentPage == 1) {
+            HelperView.message("Now you stand on the first page...!");
+            adminView.bookView(books, rowPerPage, currentPage);
+        } else {
+            currentPage = 1;
+            adminView.bookView(books, rowPerPage, currentPage);
+        }
+        return currentPage;
+    }
+    public int previousBook(List<Book> books, int rowPerPage, int currentPage) {
+        if (currentPage > 1) {
+            currentPage--;
+            adminView.bookView(books, rowPerPage, currentPage);
+        }else {
+            currentPage = (int) Math.ceil((double) adminService.getAllBook().size() / rowPerPage);
+            adminView.bookView(books, rowPerPage, currentPage);
+        }
+        return currentPage;
+    }
+    public int nextBook(List<Book> books, int rowPerPage, int currentPage) {
+        int totalPages = (int) Math.ceil((double) adminService.getAllBook().size() / rowPerPage);
+        if (currentPage < totalPages) {
+            currentPage++;
+            adminView.bookView(books, rowPerPage, currentPage);
+        }else {
+            currentPage = 1;
+            adminView.bookView(books, rowPerPage, currentPage);
+        }
+        return currentPage;
+    }
+    public int lastBook(List<Book> books, int rowPerPage, int currentPage) {
+        int totalPages = (int) Math.ceil((double) adminService.getAllBook().size() / rowPerPage);
+        if (currentPage == totalPages) {
+            HelperView.message("Now you stand on the last page...!");
+            adminView.bookView(books, rowPerPage, currentPage);
+        } else {
+            currentPage = totalPages;
+            adminView.bookView(books, rowPerPage, currentPage);
+        }
+        return currentPage;
+    }
+    public int setRecordBook(){
+        Scanner sc = new Scanner(System.in);
+        System.out.print("Please enter record for display: ");
+        int record = Integer.parseInt(sc.nextLine());
+        HelperView.message(String.format("    Set page to %d record successfully...!    ",record));
+        return record;
     }
 }
 
