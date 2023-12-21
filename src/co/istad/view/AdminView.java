@@ -32,18 +32,18 @@ public class AdminView {
     }
     public void adminDashboardView(Scanner scanner){
         Table table = new Table(2, BorderStyle.UNICODE_BOX_DOUBLE_BORDER_WIDE, ShownBorders.SURROUND);
-        table.addCell("     1) View Admin Detail       ");
-        table.addCell("     2) View Librarian Detail     ");
-        table.addCell("     3) View User Detail     ");
-        table.addCell("     4) View Book Detail     ");
-        table.addCell("     5) Reset Password       ");
-        table.addCell("     6) Disable Account      ");
-        table.addCell("     7) Remove Account       ");
-        table.addCell("     8) Save Report as Excel     ");
-        table.addCell("     9) Backup      ");
-        table.addCell("     10) Restore      ");
-        table.addCell("     11) View Report    ");
-        table.addCell("     12) Sign Out        ");
+        table.addCell("     1) View Admin Detail     ");
+        table.addCell("     2) View Librarian Detail   ");
+        table.addCell("     3) View User Detail   ");
+        table.addCell("     4) View Book Detail   ");
+        table.addCell("     5) Reset Password     ");
+        table.addCell("     6) Disable Account    ");
+        table.addCell("     7) Remove Account     ");
+        table.addCell("     8) Save Report as Excel   ");
+        table.addCell("     9) Backup    ");
+        table.addCell("     10) Restore    ");
+        table.addCell("     11) View Report  ");
+        table.addCell("     12) Sign Out     ");
         System.out.println(table.render());
     }
     public void dashboardOverview(){
