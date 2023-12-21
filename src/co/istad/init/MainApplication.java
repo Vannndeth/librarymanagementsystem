@@ -12,7 +12,7 @@ import co.istad.view.HelperView;
 import co.istad.view.HomepageView;
 import java.util.Scanner;
 
-public class MainApplication {
+public class staMainApplication {
     private final Scanner scanner;
     private final UserController userController;
     private final Seeder seeder;
