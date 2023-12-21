@@ -51,37 +51,24 @@ public class UserView {
         return option;
     }
 
-    public void searchOption(Scanner scanner) {
-       while(true) {
-           int option;
+    public int searchOption(Scanner scanner) {
+        int option;
            Table table = new Table(2, BorderStyle.UNICODE_BOX_DOUBLE_BORDER_WIDE, ShownBorders.ALL);
            table.addCell(" ".repeat(10) + "1. Search Book By Id" + " ".repeat(10));
            table.addCell(" ".repeat(10) + "2. Search Book By Title" + " ".repeat(10));
            table.addCell(" ".repeat(10) + "3. Search Book By Author" + " ".repeat(10));
            table.addCell(" ".repeat(10) + "4. Search Book By Category" + " ".repeat(10));
            table.addCell(" ".repeat(42) + "5. Exit" + " ".repeat(42) , 2 );
-           System.out.println(table.render());
-           try {
-               System.out.print("Please Enter Option : ");
-               option = Integer.parseInt(scanner.nextLine());
-               switch (option) {
-                   case 1 -> searchBookById();
-                   case 2 -> searchBookByTitle();
-                   case 3 -> searchBookByAuthor();
-                   case 4 -> searchBookByCategory();
-                   case 5 -> {
-                        return;
-                   }
-                   default -> throw new IllegalStateException();
-               }
-           } catch (NumberFormatException e) {
-               HelperView.message("Please choose option above...!");
-           }
-       }
+            System.out.println();
+            System.out.println(table.render());
+            System.out.println();
+            System.out.print("Enter Option :");
+           option = Integer.parseInt(scanner.nextLine());
+           return option;
     }
 
     public void dashboardOverview() {
-        List<Book> data = userService.getAllBook();
+        List<Book> data =  userService.getAllBook();
         Table table = new Table(6, BorderStyle.UNICODE_BOX_DOUBLE_BORDER_WIDE, ShownBorders.ALL);
         table.addCell("Category ID");
         table.addCell("Title");
@@ -102,7 +89,7 @@ public class UserView {
         System.out.println(table.render());
     }
 
-    public void bookHistory() {
+        public void bookHistory() {
         List<Borrow> bookHis = userService.bookHistory();
         Table table = new Table(4, BorderStyle.UNICODE_BOX_DOUBLE_BORDER_WIDE, ShownBorders.ALL);
         table.addCell("Book ID");
@@ -215,7 +202,8 @@ public class UserView {
     }
     public void searchBookById (){
         System.out.print("Please Enter Book ID : ");
-        try {long option = Long.parseLong(scanner.nextLine());
+        try {
+            long option = Long.parseLong(scanner.nextLine());
             Optional<Book> searchBook = userService.searchBookById(option);
             if(searchBook.isEmpty()) {
                 System.out.println("Book with id " + option + " is not found");
@@ -227,7 +215,12 @@ public class UserView {
             searchBook.ifPresent(book -> {
                 table.addCell(book.getId().toString());
                 table.addCell(book.getTitle());
-                table.addCell(book.getQuantity().toString());
+               if(book.getQuantity() == 0) {
+                   table.addCell("Book Out Of Stock");
+               } else {
+                   table.addCell(book.getQuantity().toString());
+               }
+
             });
             System.out.println(table.render());
         }catch (NumberFormatException e) {
@@ -249,32 +242,40 @@ public class UserView {
         searchBook.ifPresent(book -> {
             table.addCell(book.getId().toString());
             table.addCell(book.getTitle());
-            table.addCell(book.getQuantity().toString());
+            if(book.getQuantity() == 0) {
+                table.addCell("Book Out Of Stock");
+            } else {
+                table.addCell(book.getQuantity().toString());
+            }
         });
         System.out.println(table.render());
     }
-    public void searchBookByAuthor (){
-        System.out.print("Please Enter Book Author : ");
-        String option = scanner.nextLine().toLowerCase();
-        Optional<List<Book>> searchBook = userService.searchBookByAuthor(option);
-        if(searchBook.isEmpty()) {
-            System.out.println("Book with Author " + option + " is not found");
-        }
-        Table table = new Table(3, BorderStyle.UNICODE_BOX_DOUBLE_BORDER_WIDE, ShownBorders.ALL);
-        table.addCell("Book ID");
-        table.addCell("Title" );
-        table.addCell("Quantity");
-        searchBook.ifPresent(bookList ->
-                bookList.forEach( br -> {
-                            table.addCell(br.getId().toString());
-                            table.addCell(br.getTitle());
+        public void searchBookByAuthor (){
+            System.out.print("Please Enter Book Author : ");
+            String option = scanner.nextLine().toLowerCase();
+            Optional<List<Book>> searchBook = userService.searchBookByAuthor(option);
+            if(searchBook.isEmpty()) {
+                System.out.println("Book with Author " + option + " is not found");
+            }
+            Table table = new Table(3, BorderStyle.UNICODE_BOX_DOUBLE_BORDER_WIDE, ShownBorders.ALL);
+            table.addCell("Book ID");
+            table.addCell("Title" );
+            table.addCell("Quantity");
+            searchBook.ifPresent(bookList ->
+                    bookList.forEach( br -> {
+                                table.addCell(br.getId().toString());
+                                table.addCell(br.getTitle());
+                        if(br.getQuantity() == 0) {
+                            table.addCell("Book Out Of Stock");
+                        } else {
                             table.addCell(br.getQuantity().toString());
                         }
-                )
+                            }
+                    )
 
-        );
-        System.out.println(table.render());
-    }
+            );
+            System.out.println(table.render());
+        }
     public void searchBookByCategory (){
         System.out.print("Please Enter Book Category : ");
         String option = scanner.nextLine();
@@ -290,7 +291,11 @@ public class UserView {
                 bookList.forEach( br -> {
                             table.addCell(br.getId().toString());
                             table.addCell(br.getTitle());
-                            table.addCell(br.getQuantity().toString());
+                    if(br.getQuantity() == 0) {
+                        table.addCell("Book Out Of Stock");
+                    } else {
+                        table.addCell(br.getQuantity().toString());
+                    }
                         }
                 )
 

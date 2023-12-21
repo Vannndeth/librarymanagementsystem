@@ -43,10 +43,22 @@ public class UserController {
     public void userDashboard() {
         login:
        userView.dashboardOverview();
+
         do {
             int option = userView.userDashboardView(scanner);
             switch (option) {
-                case 1 -> userView.searchOption(scanner);
+                case 1 -> {
+                     int userInput  =  userView.searchOption(scanner);
+                     switch (userInput) {
+                        case 1 ->
+                            userView.searchBookById();
+                        case 2 -> userView.searchBookByTitle();
+                        case 3  -> userView.searchBookByAuthor();
+                        case 4 -> userView.searchBookByCategory();
+                        case 5 -> {}
+                        default -> throw new IllegalStateException();
+                    }
+                }
                 case 2 -> userView.borrowBook(scanner);
                 case 3 -> userView.viewBorrowHistory();
                 case 4 -> userView.returnBook(scanner);

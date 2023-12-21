@@ -92,7 +92,7 @@ public class UserDaoImpl implements UserDao {
         Category category = new Category();
         String query = """
                     SELECT b.*,c.name,c."id" as "cate_id", a.lastname, a.firstname from authors a inner JOIN books b ON b.author_id = a."id"
-                INNER JOIN category_book_details cb ON b."id" = cb.book_id INNER JOIN category c ON c."id" = cb.category_id WHERE (a.firstname  || a.lastname) ILIKE ?;                                                                                                                                                            
+                                    INNER JOIN category_book_details cb ON b."id" = cb.book_id INNER JOIN category c ON c."id" = cb.category_id WHERE (a.firstname  || a.lastname) ILIKE ? ORDER BY id ASC;                                                                                                                                                            
                 """;
         try ( PreparedStatement preparedStatement = this.connection.prepareStatement(query)) {
             preparedStatement.setString(1, "%" + author + "%" );
@@ -124,7 +124,7 @@ public class UserDaoImpl implements UserDao {
         BookDetail bookDetail = new BookDetail();
         Category cate = new Category();
         String query = """
-                SELECT c."id" as "cate_id",  * FROM category c INNER JOIN category_book_details cb ON c."id" = cb.category_id INNER JOIN books b ON b."id" = cb.book_id INNER JOIN authors a ON a."id" = b.author_id WHERE c.name ILIKE  ?;
+                SELECT c."id" as "cate_id",  * FROM category c INNER JOIN category_book_details cb ON c."id" = cb.category_id INNER JOIN books b ON b."id" = cb.book_id INNER JOIN authors a ON a."id" = b.author_id WHERE c.name ILIKE  ? ;
                 """;
         try (PreparedStatement preparedStatement = this.connection.prepareStatement(query);) {
             preparedStatement.setString(1, "%" + category + "%");
@@ -154,7 +154,7 @@ public class UserDaoImpl implements UserDao {
     public List<Book> getAllBook() {
         List<Book> books = new ArrayList<>();
         String query = """
-       SELECT b.*, c."id" as "cate_id", c.name, a.firstname, a.lastname FROM books b INNER JOIN category_book_details cb ON b."id" = cb.book_id INNER JOIN category c ON c."id" = cb.category_id INNER JOIN authors a ON a."id" = b.author_id
+       SELECT b.*, c."id" as "cate_id", c.name, a.firstname, a.lastname FROM books b INNER JOIN category_book_details cb ON b."id" = cb.book_id INNER JOIN category c ON c."id" = cb.category_id INNER JOIN authors a ON a."id" = b.author_id ORDER BY id ASC
     """;
         try (PreparedStatement preparedStatement = this.connection.prepareStatement(query)) {
             ResultSet rs = preparedStatement.executeQuery();
@@ -274,7 +274,7 @@ public class UserDaoImpl implements UserDao {
     @Override
     public List<Borrow> bookHistory() {
         List<Borrow> borrowList = new ArrayList<>();
-        String query = "SELECT  b.id, b.title , bw.is_borrow, bw.start_borrow_date, bw.deadline_borrow_date  FROM borrow bw INNER JOIN books b ON bw.book_id = b.id WHERE bw.user_id = ?";
+        String query = "SELECT  b.id, b.title , bw.is_borrow, bw.start_borrow_date, bw.deadline_borrow_date  FROM borrow bw INNER JOIN books b ON bw.book_id = b.id WHERE bw.user_id = ? ";
         try (PreparedStatement preparedStatement = ConnectionDb.getConnection().prepareStatement(query)) {
             preparedStatement.setLong(1, storage.getId());
             ResultSet rs =preparedStatement.executeQuery();
@@ -299,9 +299,10 @@ public class UserDaoImpl implements UserDao {
     public List<Borrow> borrowHistory() {
         List<Borrow> borrowList = new ArrayList<>();
        String query = """
-                 select bk.id , bk.title, bw.start_borrow_date, bw.deadline_borrow_date from borrow bw inner join books bk on bw.book_id = bk.id where bw.is_return = false
+                 select bk.id , bk.title, bw.start_borrow_date, bw.deadline_borrow_date from borrow bw inner join books bk on bw.book_id = bk.id where bw.is_return = false AND bw.user_id = ?
                """;
         try(PreparedStatement statement = this.connection.prepareStatement(query)) {
+            statement.setLong(1, storage.getId());
             ResultSet rs =statement.executeQuery();
             while (rs.next()) {
                 Borrow borrow = new Borrow();
@@ -336,7 +337,7 @@ public class UserDaoImpl implements UserDao {
     public List<Borrow> allBorrow(){
         List<Borrow> borrowList = new ArrayList<>();
         String query = """
-                SELECT * FROM borrow bw WHERE bw.user_id = ? AND is_return = false;
+                SELECT * FROM borrow bw WHERE bw.user_id = ? AND is_return = false ;
                 """;
         try ( PreparedStatement preparedStatement = this.connection.prepareStatement(query)) {
                 preparedStatement.setLong(1 , storage.getId());
@@ -360,7 +361,7 @@ public class UserDaoImpl implements UserDao {
         String query = """
                 INSERT INTO return (borrow_id)
                 VALUES (
-                    (SELECT id FROM borrow WHERE book_id = ?)
+                    (SELECT id FROM borrow WHERE book_id = ? LIMIT 1)
                 );
                 """;
         try ( PreparedStatement preparedStatement = this.connection.prepareStatement(query)) {
@@ -375,9 +376,10 @@ public class UserDaoImpl implements UserDao {
     @Override
     public int countBorrowBook() {
         String query = """
-                SELECT COUNT(*) FROM borrow bw WHERE bw.is_return = false
+                SELECT COUNT(*) FROM borrow bw WHERE bw.is_return = false AND bw.user_id = ?
                 """;
         try ( PreparedStatement preparedStatement = this.connection.prepareStatement(query)) {
+            preparedStatement.setLong(1 , storage.getId());
             preparedStatement.executeQuery();
             ResultSet resultSet = preparedStatement.executeQuery();
             if (resultSet.next()) {
