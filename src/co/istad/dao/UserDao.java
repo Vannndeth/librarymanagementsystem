@@ -22,4 +22,5 @@ public interface UserDao extends MainFeatureDao {
     public List<Borrow> allBorrow ();
     public Return returnBook (long id);
     public int countBorrowBook();
+
 }
