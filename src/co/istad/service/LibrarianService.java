@@ -23,4 +23,5 @@ public interface LibrarianService extends MainFeatureService {
     public List<Book> searchBooksByTitle(String title);
     public void backup();
     public List<Book> bookPagination( int page, int limit );
+    public List<User> getReport();
 }

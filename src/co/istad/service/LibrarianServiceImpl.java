@@ -32,7 +32,7 @@ public class LibrarianServiceImpl implements LibrarianService{
 
     @Override
     public Book updateBookById(Long id, Book book) {
-        return null;
+        return librarianDao.updateBookById(id, book);
     }
 
     @Override
@@ -139,4 +139,8 @@ public class LibrarianServiceImpl implements LibrarianService{
         return librarianDao.bookPagination( page, limit );
     }
 
+    @Override
+    public List<User> getReport(){
+        return librarianDao.getReport();
+    }
 }

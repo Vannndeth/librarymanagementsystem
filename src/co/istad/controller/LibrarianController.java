@@ -3,6 +3,7 @@ package co.istad.controller;
 import co.istad.model.Author;
 import co.istad.model.Book;
 import co.istad.model.Borrow;
+import co.istad.model.User;
 import co.istad.service.LibrarianService;
 import co.istad.storage.Storage;
 import co.istad.util.Helper;
@@ -11,7 +12,20 @@ import co.istad.util.Pagination;
 import co.istad.util.Singleton;
 import co.istad.view.HelperView;
 import co.istad.view.LibrarianView;
+import org.apache.logging.log4j.simple.SimpleLoggerContextFactory;
+import org.apache.poi.ss.usermodel.Cell;
+import org.apache.poi.ss.usermodel.CellStyle;
+import org.apache.poi.ss.usermodel.Row;
+import org.apache.poi.util.Configurator;
+import org.apache.poi.xssf.model.Styles;
+import org.apache.poi.xssf.usermodel.XSSFSheet;
+import org.apache.poi.xssf.usermodel.XSSFWorkbook;
+import org.apache.logging.log4j.Level;
 
+import java.io.File;
+import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
@@ -19,6 +33,7 @@ import java.util.Scanner;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.concurrent.atomic.AtomicLong;
 import java.util.concurrent.atomic.AtomicReference;
+import java.util.logging.LogManager;
 
 public class LibrarianController {
     private final LibrarianView librarianView;
@@ -54,6 +69,39 @@ public class LibrarianController {
                     backupAndRecoveryPage();
                 }
                 case 5 -> {
+                    //Generate Report
+                    System.setProperty("log4j2.loggerContextFactory", SimpleLoggerContextFactory.class.getName());
+
+
+                    try {
+                        // Your code
+                        org.apache.logging.log4j.Logger logger = org.apache.logging.log4j.LogManager.getLogger(LibrarianController.class);
+                        XSSFWorkbook xssfWorkbook = new XSSFWorkbook();
+                        XSSFSheet sheet = xssfWorkbook.createSheet("sheet1");
+                        System.out.println( librarianService.getReport().size() );
+                        librarianView.reportView( librarianService.getReport(), 1,1,1, false );
+                        int rownum = 0;
+                        for (User user : librarianService.getReport()) {
+                            Row row = sheet.createRow(rownum++);
+                            if( rownum == 1 ){
+                                Cell cell = row.createCell(0);
+                                cell.setCellValue("Id");
+                                cell = row.createCell(1);
+                                cell.setCellValue("Title");
+                            }else{
+                                createUserReport(user, row);
+                            }
+                        }
+                        FileOutputStream out = new FileOutputStream(new File("/home/sunlyhuor/dir/test.xlsx"));
+                        xssfWorkbook.write(out);
+                        out.close();
+                        HelperView.message("Generated Successfully");
+                    } catch (IOException e) {
+                        HelperView.error(e.getMessage());
+                        return;
+                    }
+                }
+                case 6 -> {
                     //Logout
                     HelperView.message("Logout Successfully");
                     storage.setId(null);
@@ -276,6 +324,7 @@ public class LibrarianController {
                 }
                 case 2 -> {
                     //Update Book
+                    bookUpdatePage();
                 }
                 case 3 -> {
                     //Search Book
@@ -286,7 +335,7 @@ public class LibrarianController {
                     int totalPage = librarianService.getAllBook().size();
                     Pagination pagination = new Pagination(1,1 , 3 );
                     do{
-                        pagination.setTotalPage( (int)Math.ceil((float) ( totalPage / (float)pagination.getLimit() ))  );
+                        pagination.setTotalPage( (int)Math.ceil(( totalPage / (float)pagination.getLimit() ))  );
                         librarianView.bookView(
                                 librarianService.bookPagination( pagination.getCurrentPage(), pagination.getLimit() ),
                                 pagination.getCurrentPage(),
@@ -337,6 +386,10 @@ public class LibrarianController {
                                 pagination.setLimit( limit.get() );
                             }
                             case 7 -> {
+                                //Report Book
+
+                            }
+                            case 8 -> {
                                 return;
                             }
                             default -> {
@@ -472,4 +525,73 @@ public class LibrarianController {
             }
         }while (true);
     }
+
+    private void bookUpdatePage(){
+        HelperView.welcome("=".repeat(50));
+        HelperView.welcome("Welcome to Borrow page");
+        HelperView.welcome("=".repeat(50));
+        do {
+            LibrarianUtil librarianUtil = new LibrarianUtil();
+            Book book = new Book();
+            librarianView.bookConfirmBookId( book );
+            if( book.getId() == null ){
+                return;
+            }
+            librarianView.bookUpdateMenu( librarianUtil );
+            switch (librarianUtil.getOption()){
+                case 1 -> {
+                    //Update Book Title
+                    librarianView.bookUpdateTitleView( book );
+                    if( !book.getTitle().isEmpty() ){
+                        Book res = librarianService.updateBookById(book.getId(), book);
+                        if( res != null ) HelperView.message("Book updated successfully!");
+                    }else return;
+
+                }
+                case 2 -> {
+                    //Update Book Quantity
+                    librarianView.bookUpdateQuantityView( book );
+                    if( book.getQuantity() > 0 ){
+                        Book res = librarianService.updateBookById(book.getId(), book);
+                        if( res != null ) HelperView.message("Book updated successfully!");
+                    }else return;
+                }
+                case 3 -> {
+                    //Update Book Author
+                    Author author = new Author();
+                    librarianView.authConfirmId( author );
+                    if( author.getId() == null ){
+                        return;
+                    }
+                    book.setAuthor(author);
+                    Book res = librarianService.updateBookById(book.getId(), book);
+                    if( res != null ) HelperView.message("Book updated successfully!");
+                }
+                case 4 -> {
+                    //Exit
+                    return;
+                }
+                default -> {
+                    HelperView.error("Please enter number above of menu!");
+                }
+            }
+        }while (true);
+    }
+
+    private static void createBookList(Book book, Row row) {
+        Cell cell = row.createCell(0);
+        cell.setCellValue(book.getId());
+
+        cell = row.createCell(1);
+        cell.setCellValue( book.getTitle() );
+    }
+
+    private static void createUserReport(User user, Row row) {
+        Cell cell = row.createCell(0);
+        cell.setCellValue(user.getId());
+
+        cell = row.createCell(1);
+        cell.setCellValue( user.getBorrow().getBook().getTitle() );
+    }
+
 }

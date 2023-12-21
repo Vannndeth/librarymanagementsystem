@@ -13,7 +13,23 @@ public class User {
     private LocalDate createdDate;
     private Role role;
 
+    private Borrow borrow;
+    private  Return aReturn;
+
     public User() {
+    }
+
+    public User(Long id, String username, String email, String password, String confirmPassword, Boolean isDisable, LocalDate createdDate, Role role, Borrow borrow, Return aReturn) {
+        this.id = id;
+        this.username = username;
+        this.email = email;
+        this.password = password;
+        this.confirmPassword = confirmPassword;
+        this.isDisable = isDisable;
+        this.createdDate = createdDate;
+        this.role = role;
+        this.borrow = borrow;
+        this.aReturn = aReturn;
     }
 
     public User(Long id, String username, String email, String password, String confirmPassword, Boolean isDisable, LocalDate createdDate, Role role) {
@@ -25,6 +41,22 @@ public class User {
         this.isDisable = isDisable;
         this.createdDate = createdDate;
         this.role = role;
+    }
+
+    public Return getaReturn() {
+        return aReturn;
+    }
+
+    public void setaReturn(Return aReturn) {
+        this.aReturn = aReturn;
+    }
+
+    public Borrow getBorrow() {
+        return borrow;
+    }
+
+    public void setBorrow(Borrow borrow) {
+        this.borrow = borrow;
     }
 
     public Long getId() {

@@ -5,6 +5,7 @@ import co.istad.model.*;
 import co.istad.storage.Storage;
 import co.istad.util.Singleton;
 import co.istad.view.HelperView;
+import org.apache.poi.sl.draw.geom.GuideIf;
 
 import java.sql.Connection;
 import java.sql.PreparedStatement;
@@ -418,7 +419,7 @@ public class LibrarianDaoImpl implements LibrarianDao {
     @Override
     public Optional<Book> searchBookById(Long id) {
         String query = """
-                   SELECT b.* ,a.email as "auth_email", a.firstname as "auth_firstname", a.lastname as "auth_lastname" , a."id" as "auth_id" ,a.firstname as "auth_firstname", a.lastname as "auth_lastname", u.username as "user_username", c."id" as "category_id", c."name" as "category_name" FROM books b
+                   SELECT b.* ,a.email as "auth_email", a.firstname as "auth_firstname", a.lastname as "auth_lastname" , a."id" as "auth_id" ,a.firstname as "auth_firstname", a.lastname as "auth_lastname", u.username as "user_username",u.id as "user_id" ,c."id" as "category_id", c."name" as "category_name" FROM books b
                    INNER JOIN authors a ON a."id" = b.author_id
                    INNER JOIN users u ON u."id" = b.user_id
                    INNER JOIN category_book_details ctb ON ctb.book_id = b."id"
@@ -445,6 +446,7 @@ public class LibrarianDaoImpl implements LibrarianDao {
                 author.setLastName( resultSet.getString("auth_lastname") );
                 author.setEmail( resultSet.getString("auth_email") );
                 user.setUsername( resultSet.getString("user_username") );
+                user.setId( resultSet.getLong("user_id") );
                 book.setCategory(category);
                 book.setAuthor(author);
                 book.setQuantity( resultSet.getInt("quantity") );
@@ -558,7 +560,23 @@ public class LibrarianDaoImpl implements LibrarianDao {
 
     @Override
     public Optional<User> searchUserById(Long id) {
-        return Optional.empty();
+        String query = """
+                SELECT * FROM users WHERE id = ?;
+                """;
+        try( PreparedStatement preparedStatement = this.connection.prepareStatement( query ) ){
+            preparedStatement.setLong(1, id);
+            ResultSet resultSet = preparedStatement.executeQuery();
+            User user = new User();
+            while ( resultSet.next() ){
+                user.setId(resultSet.getLong("id"));
+                user.setUsername(resultSet.getString("username"));
+                user.setEmail(resultSet.getString("email"));
+            }
+            return Optional.of(user);
+        }catch (Exception ex){
+            HelperView.error( ex.getMessage() );
+            return Optional.empty();
+        }
     }
 
     @Override
@@ -664,6 +682,48 @@ public class LibrarianDaoImpl implements LibrarianDao {
         catch(Exception ex){
             HelperView.error(ex.getMessage());
             return borrows;
+        }
+    }
+
+    @Override
+    public List<User> getReport(){
+        String query = """
+                    SELECT u.*,
+                    		bk.id as "book_id",
+                    		bk.title as "book_title",
+                    		bk.quantity as "book_quantity",
+                    		br.is_borrow as "is_borrow",
+                    		br.is_return as "is_return",
+                    		br.created_at as "borrow_at",
+                    		br.book_quantity as "borrow_quantity"
+                    FROM public.users u
+                    INNER JOIN public.borrow br ON br.user_id = u.id
+                    INNER JOIN public.books bk ON bk.id = br.book_id
+                    ORDER BY br.created_at DESC
+                """;
+        List<User> users = new ArrayList<>();
+        try(PreparedStatement preparedStatement = this.connection.prepareStatement(query)){
+            ResultSet resultSet = preparedStatement.executeQuery();
+            while ( resultSet.next() ){
+                Borrow borrow = new Borrow();
+                Book book = new Book();
+                User user = new User();
+                user.setId( resultSet.getLong("id") );
+                user.setUsername( resultSet.getString("username") );
+                user.setEmail( resultSet.getString("email") );
+                borrow.setQuantity( resultSet.getInt("borrow_quantity") );
+                borrow.setBorrow( resultSet.getBoolean("is_borrow") );
+                borrow.setReturn( resultSet.getBoolean("is_return") );
+                borrow.setBorrowDate( resultSet.getDate("borrow_at").toLocalDate() );
+                book.setId( resultSet.getLong("book_id") );
+                book.setTitle( resultSet.getString("book_title") );
+                borrow.setBook( book );
+                user.setBorrow( borrow );
+            }
+            return users;
+        }catch(Exception ex){
+            HelperView.error(ex.getMessage());
+            return users;
         }
     }
 
