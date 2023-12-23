@@ -24,12 +24,96 @@ public class LibrarianDaoImpl implements LibrarianDao {
     }
     @Override
     public Category createCategory(Category category) {
-        return null;
+        Category cate = null;
+        String query = """
+                INSERT INTO category(name) VALUES(?)
+                RETURNING id, name,created_at;
+                """;
+        try( PreparedStatement preparedStatement = this.connection.prepareStatement(query) ){
+            preparedStatement.setString(1, category.getName());
+            ResultSet resultSet = preparedStatement.executeQuery();
+            while ( resultSet.next() ){
+                cate = new Category();
+                cate.setId( resultSet.getLong("id") );
+                cate.setName( resultSet.getString("name") );
+                cate.setCreatedDate( resultSet.getDate("created_at").toLocalDate() );
+            }
+
+        }catch(Exception ex){
+            HelperView.error( ex.getMessage() );
+        }
+
+        return cate;
     }
 
     @Override
+    public Category searchCategoryById(Long id) {
+        Category cate = null;
+        String query = """
+                SELECT * FROM category WHERE id = ?;
+                """;
+        try( PreparedStatement preparedStatement = this.connection.prepareStatement(query) ){
+            preparedStatement.setLong( 1, id );
+            ResultSet resultSet = preparedStatement.executeQuery();
+            while ( resultSet.next() ){
+                cate = new Category();
+                cate.setId( resultSet.getLong("id") );
+                cate.setName( resultSet.getString("name") );
+                cate.setCreatedDate( resultSet.getDate("created_at").toLocalDate() );
+            }
+
+        }catch(Exception ex){
+            HelperView.error( ex.getMessage() );
+        }
+
+        return cate;
+    }
+    @Override
+    public List<Category> getAllCategories(){
+        List<Category> categories = new ArrayList<>();
+        String query = """
+                SELECT * FROM category WHERE;
+                """;
+        try( PreparedStatement preparedStatement = this.connection.prepareStatement(query) ){
+            ResultSet resultSet = preparedStatement.executeQuery();
+            while ( resultSet.next() ){
+                Category cate = new Category();
+                cate.setId( resultSet.getLong("id") );
+                cate.setName( resultSet.getString("name") );
+                cate.setCreatedDate( resultSet.getDate("created_at").toLocalDate() );
+                categories.add(cate);
+            }
+
+        }catch(Exception ex){
+            HelperView.error( ex.getMessage() );
+        }
+        return categories;
+    }
+    @Override
     public Category updateCategoryById(Long id, Category category) {
-        return null;
+        Category cate = null;
+        String query = """
+                UPDATE category
+                SET name = ?
+                WHERE id = ?
+                RETURNING id, name,created_at;
+                """;
+        try( PreparedStatement preparedStatement = this.connection.prepareStatement(query) ){
+            preparedStatement.setString(1, category.getName());
+            preparedStatement.setLong(2, id);
+            ResultSet resultSet = preparedStatement.executeQuery();
+            while ( resultSet.next() ){
+                cate = new Category();
+                cate.setId( resultSet.getLong("id") );
+                cate.setName( resultSet.getString("name") );
+                cate.setCreatedDate( resultSet.getDate("created_at").toLocalDate() );
+            }
+
+        }catch(Exception ex){
+            HelperView.error( ex.getMessage() );
+        }
+
+        return cate;
     }
 
     @Override
@@ -131,7 +215,6 @@ public class LibrarianDaoImpl implements LibrarianDao {
             return null;
         }
     }
-
 
     @Override
     public Boolean confirmBorrow(Borrow borrow) {
@@ -257,7 +340,60 @@ public class LibrarianDaoImpl implements LibrarianDao {
 
     @Override
     public Boolean returnBook(User user, Book book) {
-        return null;
+        String selectBorrow = """
+                SELECT * FROM borrow
+                WHERE book_id = ? AND user_id = ? AND is_borrow = true AND is_return = false;
+                """;
+        String updateBookQuery = """
+                UPDATE books
+                SET quantity = quantity + ?
+                WHERE id = ?;
+                """;
+        String updateReturnQuery = """
+                UPDATE borrow
+                SET is_return = true
+                WHERE id = ?;
+                """;
+        try(
+            PreparedStatement preparedStatement = this.connection.prepareStatement(selectBorrow);
+            PreparedStatement updateBookStatement = this.connection.prepareStatement(updateBookQuery);
+            PreparedStatement updateReturnStatement = this.connection.prepareStatement( updateReturnQuery )
+        ){
+            this.connection.setAutoCommit(false);
+            //Added Data
+            preparedStatement.setLong( 1, book.getId() );
+            preparedStatement.setLong( 2, user.getId() );
+            ResultSet resultSet = preparedStatement.executeQuery();
+            Borrow borrow = null;
+            while ( resultSet.next() ){
+                borrow = new Borrow();
+                borrow.setQuantity( resultSet.getInt("book_quantity") );
+                borrow.setId( resultSet.getLong("id") );
+            }
+
+            if( borrow == null ){
+                HelperView.error( String.format("This user id(%s) not borrowed to book id(%s) yet!", user.getId(), book.getId()) );
+                return false;
+            }
+
+            updateBookStatement.setInt( 1, borrow.getQuantity() );
+            updateBookStatement.setLong( 2, book.getId() );
+            updateReturnStatement.setLong( 1, borrow.getId() );
+
+            updateBookStatement.executeUpdate();
+            updateReturnStatement.executeUpdate();
+            this.connection.commit();
+            return true;
+
+        }catch(Exception ex){
+            try{
+                this.connection.rollback();
+            }catch (SQLException e){
+                HelperView.error( "Database can't rollback" );
+            }
+            HelperView.error( "Something went wrong!" );
+            return false;
+        }
     }
 
     @Override
@@ -566,11 +702,16 @@ public class LibrarianDaoImpl implements LibrarianDao {
         try( PreparedStatement preparedStatement = this.connection.prepareStatement( query ) ){
             preparedStatement.setLong(1, id);
             ResultSet resultSet = preparedStatement.executeQuery();
-            User user = new User();
+            User user = null;
             while ( resultSet.next() ){
+                user = new User();
                 user.setId(resultSet.getLong("id"));
                 user.setUsername(resultSet.getString("username"));
                 user.setEmail(resultSet.getString("email"));
+                user.setDisable( resultSet.getBoolean("is_disable") );
+            }
+            if( user == null ){
+                return Optional.empty();
             }
             return Optional.of(user);
         }catch (Exception ex){
@@ -582,6 +723,29 @@ public class LibrarianDaoImpl implements LibrarianDao {
     @Override
     public Optional<User> searchUserByUsername(String username) {
         return Optional.empty();
+    }
+
+    @Override
+    public List<User> searchUsersByUsername(String username) {
+        String query = """
+                SELECT * FROM users WHERE username ILIKE ?;
+                """;
+        List<User> users = new ArrayList<>();
+        try( PreparedStatement preparedStatement = this.connection.prepareStatement( query ) ){
+            preparedStatement.setString(1, "%" + username + "%");
+            ResultSet resultSet = preparedStatement.executeQuery();
+            while ( resultSet.next() ){
+                User user = new User();
+                user.setId(resultSet.getLong("id"));
+                user.setUsername(resultSet.getString("username"));
+                user.setEmail(resultSet.getString("email"));
+                user.setDisable( resultSet.getBoolean("is_disable") );
+                users.add(user);
+            }
+        }catch (Exception ex){
+            HelperView.error( ex.getMessage() );
+        }
+        return users;
     }
 
     public List<Author> authorPagination( int page, int limit ){
@@ -695,7 +859,9 @@ public class LibrarianDaoImpl implements LibrarianDao {
                     		br.is_borrow as "is_borrow",
                     		br.is_return as "is_return",
                     		br.created_at as "borrow_at",
-                    		br.book_quantity as "borrow_quantity"
+                    		br.book_quantity as "borrow_quantity",
+                    		br.start_borrow_date,
+                    		br.deadline_borrow_date
                     FROM public.users u
                     INNER JOIN public.borrow br ON br.user_id = u.id
                     INNER JOIN public.books bk ON bk.id = br.book_id
@@ -717,8 +883,11 @@ public class LibrarianDaoImpl implements LibrarianDao {
                 borrow.setBorrowDate( resultSet.getDate("borrow_at").toLocalDate() );
                 book.setId( resultSet.getLong("book_id") );
                 book.setTitle( resultSet.getString("book_title") );
+                borrow.setStartBorrowDate( resultSet.getDate("start_borrow_date").toLocalDate() );
+                borrow.setDeadlineBorrowDate( resultSet.getDate("deadline_borrow_date").toLocalDate() );
                 borrow.setBook( book );
                 user.setBorrow( borrow );
+                users.add( user );
             }
             return users;
         }catch(Exception ex){
@@ -727,4 +896,226 @@ public class LibrarianDaoImpl implements LibrarianDao {
         }
     }
 
+    @Override
+    public Borrow selectBorrowById( Long id ){
+        Borrow borrow = null;
+        String query = """
+                   SELECT
+                   bk.*,
+                   br.book_quantity,
+                   u.username,
+                   u.id as "user_id",
+                   br.start_borrow_date,
+                   br.deadline_borrow_date,
+                   br.id as "borrow_id",
+                   br.is_borrow,
+                   br.is_return
+                   FROM borrow br
+                   INNER JOIN books bk ON bk.id = br.book_id
+                   INNER JOIN users u ON u.id = br.user_id
+                   WHERE br.id = ? AND br.is_return = false;
+                """;
+        try( PreparedStatement preparedStatement = this.connection.prepareStatement( query ) ){
+            preparedStatement.setLong( 1, id );
+            ResultSet resultSet = preparedStatement.executeQuery();
+            while ( resultSet.next() ){
+                borrow = new Borrow();
+                Book book = new Book();
+                User user = new User();
+                book.setTitle( resultSet.getString("title") );
+                book.setId( resultSet.getLong("id") );
+                user.setUsername( resultSet.getString("username") );
+                user.setId( resultSet.getLong("user_id") );
+                borrow.setUser( user );
+                borrow.setBorrow( resultSet.getBoolean("is_borrow") );
+                borrow.setReturn( resultSet.getBoolean("is_return") );
+                borrow.setBook( book );
+                borrow.setId( resultSet.getLong("borrow_id") );
+                borrow.setStartBorrowDate( resultSet.getDate("start_borrow_date").toLocalDate() );
+                borrow.setDeadlineBorrowDate( resultSet.getDate("deadline_borrow_date").toLocalDate() );
+                borrow.setQuantity( resultSet.getInt("book_quantity") );
+
+            }
+
+        }catch (Exception ex){
+            HelperView.error( ex.getMessage() );
+        }
+        return borrow;
+    }
+
+    @Override
+    public List<Borrow> getAllBorrow(){
+        List<Borrow> borrows = new ArrayList<>();
+        String query = """
+                   SELECT
+                   bk.*,
+                   br.book_quantity,
+                   u.username,
+                   u.id as "user_id",
+                   br.start_borrow_date,
+                   br.deadline_borrow_date,
+                   br.id as "borrow_id",
+                   br.is_borrow,
+                   br.is_return
+                   FROM borrow br
+                   INNER JOIN books bk ON bk.id = br.book_id
+                   INNER JOIN users u ON u.id = br.user_id
+                   WHERE br.is_return = false;
+                """;
+        try( PreparedStatement preparedStatement = this.connection.prepareStatement( query ) ){
+            ResultSet resultSet = preparedStatement.executeQuery();
+            while ( resultSet.next() ){
+                Borrow borrow = new Borrow();
+                Book book = new Book();
+                User user = new User();
+                book.setTitle( resultSet.getString("title") );
+                book.setId( resultSet.getLong("id") );
+                user.setUsername( resultSet.getString("username") );
+                user.setId( resultSet.getLong("user_id") );
+                borrow.setUser( user );
+                borrow.setBook( book );
+                borrow.setBorrow( resultSet.getBoolean("is_borrow") );
+                borrow.setReturn( resultSet.getBoolean("is_return") );
+                borrow.setId( resultSet.getLong("borrow_id") );
+                borrow.setStartBorrowDate( resultSet.getDate("start_borrow_date").toLocalDate() );
+                borrow.setDeadlineBorrowDate( resultSet.getDate("deadline_borrow_date").toLocalDate() );
+                borrow.setQuantity( resultSet.getInt("book_quantity") );
+                borrows.add( borrow );
+            }
+
+        }catch (Exception ex){
+            HelperView.error( ex.getMessage() );
+        }
+        return borrows;
+    }
+
+    @Override
+    public List<Return> getAllReturn() {
+        List<Return> returns = new ArrayList<>();
+        String query = """
+                SELECT
+                    re.*,
+                     u.id as "user_id",
+                     u.username,
+                     b.title,
+                     b.id as "book_id",
+                     br.book_quantity as "borrow_quantity",
+                     br.is_return,
+                     br.is_borrow,
+                     br.deadline_borrow_date,
+                     br.start_borrow_date,
+                     br.id as "borrow_id"
+                FROM return re
+                INNER JOIN borrow br ON br.id = re.borrow_id
+                INNER JOIN users u ON u.id = br.user_id
+                INNER JOIN books b ON b.id = br.book_id
+                WHERE br.is_borrow = true
+                """;
+        try( PreparedStatement preparedStatement = this.connection.prepareStatement(query) ){
+            ResultSet resultSet = preparedStatement.executeQuery();
+            while (resultSet.next()){
+                User user = new User();
+                Borrow borrow = new Borrow();
+                Book book = new Book();
+                Return aReturn = new Return();
+                //Book
+                book.setId( resultSet.getLong("book_id") );
+                book.setTitle( resultSet.getString("title") );
+                //User
+                user.setId( resultSet.getLong("user_id") );
+                user.setUsername( resultSet.getString("username") );
+                //Borrow
+                borrow.setUser(user);
+                borrow.setBook(book);
+                borrow.setQuantity( resultSet.getInt("borrow_quantity") );
+                borrow.setId( resultSet.getLong("borrow_id") );
+                borrow.setReturn( resultSet.getBoolean("is_return") );
+                borrow.setBorrow( resultSet.getBoolean("is_borrow") );
+                borrow.setStartBorrowDate( resultSet.getDate("start_borrow_date").toLocalDate() );
+                borrow.setDeadlineBorrowDate( resultSet.getDate("deadline_borrow_date").toLocalDate() );
+
+                //Return
+                aReturn.setId( resultSet.getLong("id") );
+                aReturn.setReturnDate( resultSet.getDate("created_at").toLocalDate() );
+                aReturn.setBorrow( borrow );
+                returns.add(aReturn);
+            }
+
+        }catch (Exception ex){
+            HelperView.error(ex.getMessage());
+        }
+
+        return returns;
+    }
+
+    @Override
+    public Boolean addUserToBlacklist(User user, Book book, String message) {
+        String query = """
+                INSERT INTO blacklists( user_id, book_id, quantity, message, status )
+                VALUES(?, ?, ?, ?, ?);
+                """;
+        String updateBookQuery = """
+                UPDATE books
+                SET quantity = quantity + ?
+                WHERE id = ?;
+                """;
+        String borrowQuery = """
+                SELECT * FROM borrow
+                WHERE user_id = ? AND book_id = ? AND is_borrow = true;
+                """;
+        try(
+            PreparedStatement preparedStatement = this.connection.prepareStatement(query);
+            PreparedStatement updateBookPrepareStatement = this.connection.prepareStatement(updateBookQuery);
+            PreparedStatement borrowPrepareStatement = this.connection.prepareStatement(borrowQuery);
+        ){
+            this.connection.setAutoCommit(false);
+
+            borrowPrepareStatement.setLong(1, user.getId());
+            borrowPrepareStatement.setLong(2, book.getId());
+            ResultSet resultSet = borrowPrepareStatement.executeQuery();
+            Borrow borrow = null;
+            while ( resultSet.next() ){
+                borrow = new Borrow();
+                borrow.setId( resultSet.getLong("id") );
+            }
+
+            if( borrow == null ){
+                HelperView.error(String.format("User id(%s) not borrow this book id(%s) yet", user.getId(), book.getId()));
+                return false;
+            }
+
+            //Add Data
+            preparedStatement.setLong(1, user.getId());
+            preparedStatement.setLong(2, book.getId());
+            preparedStatement.setInt(3, book.getQuantity());
+            preparedStatement.setString(4, message);
+            preparedStatement.setBoolean(5, true);
+            preparedStatement.executeUpdate();
+
+            if( book.getQuantity() > 0 ){
+                updateBookPrepareStatement.setInt(1, book.getQuantity());
+                updateBookPrepareStatement.setLong(2, book.getQuantity());
+                updateBookPrepareStatement.executeUpdate();
+            }
+
+            this.connection.commit();
+
+            return true;
+
+        }catch (Exception ex){
+            try{
+                this.connection.rollback();
+            }catch (SQLException e){
+                HelperView.error(ex.getMessage());
+                return false;
+            }
+            HelperView.error(ex.getMessage());
+            return false;
+        }
+    }
+
+    @Override
+    public Boolean removeUserFromBlacklist(User user, Book book) {
+        return null;
+    }
 }

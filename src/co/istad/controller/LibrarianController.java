@@ -48,7 +48,6 @@ public class LibrarianController {
         storage = Singleton.getStorage();
     }
     public void librarianDashboard(){
-        librarianView.welcome();
         do{
             LibrarianUtil librarianUtil = new LibrarianUtil();
             librarianView.mainMenu( librarianUtil );
@@ -62,17 +61,16 @@ public class LibrarianController {
                     authorPage();
                 }
                 case 3 -> {
-                    System.out.println("User");
+                    userPage();
                 }
                 case 4 -> {
                     //Backup and Recovery
                     backupAndRecoveryPage();
                 }
                 case 5 -> {
+                    //Completed 22-12-2023
                     //Generate Report
                     System.setProperty("log4j2.loggerContextFactory", SimpleLoggerContextFactory.class.getName());
-
-
                     try {
                         // Your code
                         org.apache.logging.log4j.Logger logger = org.apache.logging.log4j.LogManager.getLogger(LibrarianController.class);
@@ -82,15 +80,42 @@ public class LibrarianController {
                         librarianView.reportView( librarianService.getReport(), 1,1,1, false );
                         int rownum = 0;
                         for (User user : librarianService.getReport()) {
-                            Row row = sheet.createRow(rownum++);
-                            if( rownum == 1 ){
+                            if( rownum == 0 ){
+                                Row row = sheet.createRow(rownum++);
+                                //User Id
                                 Cell cell = row.createCell(0);
                                 cell.setCellValue("Id");
+
+                                //User Name
                                 cell = row.createCell(1);
-                                cell.setCellValue("Title");
-                            }else{
-                                createUserReport(user, row);
+                                cell.setCellValue("Username");
+
+                                //User Email
+                                cell = row.createCell(2);
+                                cell.setCellValue("Email");
+
+                                //Book Title
+                                cell = row.createCell(3);
+                                cell.setCellValue("Book Title");
+
+                                //Borrow
+                                cell = row.createCell(4);
+                                cell.setCellValue("Borrow");
+
+                                //Return
+                                cell = row.createCell(5);
+                                cell.setCellValue("Return");
+
+                                //Borrow At
+                                cell = row.createCell(6);
+                                cell.setCellValue("Borrow At");
+
+                                //DeadLine Date
+                                cell = row.createCell(7);
+                                cell.setCellValue( "Deadline" );
                             }
+                            Row row = sheet.createRow(rownum++);
+                            createUserReport(user, row);
                         }
                         FileOutputStream out = new FileOutputStream(new File("/home/sunlyhuor/dir/test.xlsx"));
                         xssfWorkbook.write(out);
@@ -102,6 +127,9 @@ public class LibrarianController {
                     }
                 }
                 case 6 -> {
+                    //Category
+                }
+                case 7 -> {
                     //Logout
                     HelperView.message("Logout Successfully");
                     storage.setId(null);
@@ -308,10 +336,10 @@ public class LibrarianController {
                     //Add Book
                     Book book = new Book();
                     librarianView.createBookView( book );
-                    if( book.getTitle().isEmpty() ||
-                        book.getDescription().isEmpty() ||
+                    if( book.getTitle() == null ||
+                        book.getDescription() == null ||
                         book.getQuantity() == null ||
-                        book.getAuthor().getId() == null
+                        book.getAuthor() == null
                     ){
                         HelperView.error("All fields are required!");
                     }else if( book.getTitle().length() > 50 ) {
@@ -399,8 +427,8 @@ public class LibrarianController {
                     }while (true);
                 }
                 case 5 -> {
-                    // Borrow Page
-                    borrowPage();
+                    // Borrow And Return Page
+                    borrowAndReturnPage();
                 }
                 case 6 -> {
                     //Exit
@@ -486,24 +514,33 @@ public class LibrarianController {
         }while (true);
     }
 
-    private void borrowPage(){
+    private void borrowAndReturnPage(){
         HelperView.welcome("=".repeat(50));
-        HelperView.welcome("Welcome to Borrow page");
+        HelperView.welcome("Welcome to Borrow And Return page");
         HelperView.welcome("=".repeat(50));
         do {
             LibrarianUtil librarianUtil = new LibrarianUtil();
-            librarianView.borrowMenu( librarianUtil );
+            librarianView.borrowAndReturnMenu( librarianUtil );
             switch (librarianUtil.getOption()){
                 case 1 -> {
-                    //Lists All Borrow
-
+                    //Lists All Borrow;
+                    librarianView.borrowView( librarianService.getAllBorrow(), 1,1,1, false );
                 }
                 case 2 -> {
+                    //List All Return Book
+                    librarianView.returnView( librarianService.getAllReturn(),1,1,1,false );
+                }
+                case 3 -> {
                     //Confirm Borrow
                     Borrow borrow = new Borrow();
                     librarianView.confirmBookView( borrow );
-                    System.out.print( String.format("Are you want to confirm this borrow id %s ?", borrow.getId()) );
-                    Character opt = scanner.nextLine().charAt(0);
+                    System.out.print( String.format("Are you want to confirm this borrow id %s ? : ", borrow.getId()) );
+                    Character opt = 'c';
+                    try{
+                        opt = scanner.nextLine().charAt(0);
+                    }catch (Exception ex){
+                        opt = 'c';
+                    }
                     switch (opt.toString().toLowerCase()){
                         case "y" -> {
                             if( librarianService.confirmBorrow( borrow ) ){
@@ -515,7 +552,16 @@ public class LibrarianController {
                         }
                     }
                 }
-                case 3 -> {
+                case 4 -> {
+                    //Confirm Return Book
+                    User user = new User();
+                    Book book = new Book();
+                    librarianView.confirmReturnView(user, book);
+                    if(librarianService.returnBook(user, book)) {
+                        HelperView.message(String.format("User Id(%s) returned book id(%s)", user.getId(), book.getId() ));
+                    }
+                }
+                case 5 -> {
                     //Exit
                     return;
                 }
@@ -578,20 +624,132 @@ public class LibrarianController {
         }while (true);
     }
 
-    private static void createBookList(Book book, Row row) {
-        Cell cell = row.createCell(0);
-        cell.setCellValue(book.getId());
-
-        cell = row.createCell(1);
-        cell.setCellValue( book.getTitle() );
-    }
-
     private static void createUserReport(User user, Row row) {
+        //User Id
         Cell cell = row.createCell(0);
         cell.setCellValue(user.getId());
 
+        //User Name
         cell = row.createCell(1);
+        cell.setCellValue( user.getUsername() );
+
+        //User Email
+        cell = row.createCell(2);
+        cell.setCellValue( user.getEmail() );
+
+        //Book Title
+        cell = row.createCell(3);
         cell.setCellValue( user.getBorrow().getBook().getTitle() );
+
+        //Borrow
+        cell = row.createCell( 4 );
+        cell.setCellValue( user.getBorrow().isBorrow() ? "Borrow" : "Not Confirm Yet" );
+
+        //Return
+        cell = row.createCell(5);
+        cell.setCellValue( user.getBorrow().isReturn() ? "Return" : "Not Return Yet" );
+
+        //Borrow At
+        cell = row.createCell(6);
+        cell.setCellValue( user.getBorrow().getBorrowDate().toString() );
+
+        //Deadline
+        cell = row.createCell(7);
+        cell.setCellValue( user.getBorrow().getDeadlineBorrowDate().toString() );
+    }
+
+    private void userPage(){
+        HelperView.welcome("=".repeat(50));
+        HelperView.welcome("Welcome to User page");
+        HelperView.welcome("=".repeat(50));
+        LibrarianUtil librarianUtil = new LibrarianUtil();
+        while (true){
+            librarianView.userMenu(librarianUtil);
+            switch (librarianUtil.getOption()){
+                case 1 ->{
+                    //Lists all user
+                }
+                case 2 ->{
+                    //Search User
+                    userSearchPage();
+                }
+                case 3 ->{
+                    //Add User To Blacklist
+                    User user = new User();
+                    Book book = new Book();
+                    AtomicReference<String> message = new AtomicReference<>();
+                    librarianView.addUserToBlackListView( user, book, message );
+                    if(
+                        user.getId() != null ||
+                        book.getQuantity() != null ||
+                        book.getId() == null
+                    ){
+                        System.out.print("Are you sure? press y(es or c)ancel : ");
+                        Character op = scanner.nextLine().charAt(0);
+                        switch ( op.toString().toLowerCase() ){
+                            case "y"->{
+                                //Yes
+                                if( librarianService.addUserToBlacklist(user, book, message.get()) ){
+                                    HelperView.message("Added Successfully!");
+                                }
+                            }
+                            default -> {
+                                HelperView.error("Cancel");
+                            }
+                        }
+                    }
+                }
+                case 4 ->{
+                    //Remove User from Blacklist
+                }
+                case 5 ->{
+                    //Exit
+                    return;
+                }
+            }
+        }
+    }
+
+    private void userSearchPage(){
+        LibrarianUtil librarianUtil = new LibrarianUtil();
+        while (true){
+            librarianView.userSearchMenu( librarianUtil );
+            switch ( librarianUtil.getOption() ){
+                case 1 ->{
+                    //User Search By Id
+                    User user = new User();
+                    librarianView.userSearchByIdView( user );
+                    if( user.getId() != null ){
+                        Optional<User> us = librarianService.searchUserById( user.getId() );
+                        if( us.isPresent() ){
+                            List<User> users = new ArrayList<>();
+                            users.add( us.get() );
+                            librarianView.userView( users,1,1,1,false );
+                        }else{
+                            HelperView.error( String.format("User id(%s) not fount", user.getId()) );
+                        }
+                    }
+                }
+                case 2 ->{
+                    //User Search By Username
+                    User user = new User();
+                    librarianView.userSearchByUsernameView( user );
+                    if( user.getUsername() != null ){
+                        List<User> uss = librarianService.searchUsersByUsername( user.getUsername() );
+                        if( !uss.isEmpty() ){
+                            librarianView.userView( uss,1,1,1,false );
+                        }else{
+                            HelperView.error( String.format("Username(%s) not fount", user.getUsername()) );
+                        }
+                    }
+                }
+                case 3 -> {
+                    //Exit
+                    return;
+                }
+                default -> HelperView.error("Please enter above number of list");
+            }
+        }
     }
 
 }

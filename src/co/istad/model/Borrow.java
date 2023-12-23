@@ -12,8 +12,23 @@ public class Borrow {
     private boolean isBorrow;
     private User user;
     private Book book;
+    private LocalDate startBorrowDate;
+    private LocalDate deadlineBorrowDate;
 
     public Borrow() {
+    }
+
+    public Borrow(Long id, Integer quantity, LocalDate borrowDate, LocalDate deadline, boolean isReturn, boolean isBorrow, User user, Book book, LocalDate startBorrowDate, LocalDate deadlineBorrowDate) {
+        this.id = id;
+        this.quantity = quantity;
+        this.borrowDate = borrowDate;
+        this.deadline = deadline;
+        this.isReturn = isReturn;
+        this.isBorrow = isBorrow;
+        this.user = user;
+        this.book = book;
+        this.startBorrowDate = startBorrowDate;
+        this.deadlineBorrowDate = deadlineBorrowDate;
     }
 
     public Borrow(Long id, Integer quantity, LocalDate borrowDate, LocalDate deadline, boolean isReturn, boolean isBorrow, User user, Book book) {
@@ -25,6 +40,22 @@ public class Borrow {
         this.isBorrow = isBorrow;
         this.user = user;
         this.book = book;
+    }
+
+    public LocalDate getStartBorrowDate() {
+        return startBorrowDate;
+    }
+
+    public void setStartBorrowDate(LocalDate startBorrowDate) {
+        this.startBorrowDate = startBorrowDate;
+    }
+
+    public LocalDate getDeadlineBorrowDate() {
+        return deadlineBorrowDate;
+    }
+
+    public void setDeadlineBorrowDate(LocalDate deadlineBorrowDate) {
+        this.deadlineBorrowDate = deadlineBorrowDate;
     }
 
     public Long getId() {
@@ -102,6 +133,7 @@ public class Borrow {
     public int hashCode() {
         return Objects.hash(getId(), getQuantity(), getBorrowDate(), getDeadline(), isReturn(), isBorrow(), getUser(), getBook());
     }
+
 
     @Override
     public String toString() {

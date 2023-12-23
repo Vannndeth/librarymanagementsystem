@@ -38,13 +38,14 @@ public class LibrarianView {
                 "                                              \n");
     }
     public void mainMenu(LibrarianUtil librarianUtil){
-        Table table = new Table(4, BorderStyle.UNICODE_BOX_DOUBLE_BORDER_WIDE, ShownBorders.ALL);
-        table.addCell(" ".repeat(10) + "1. Book" + " ".repeat(10));
-        table.addCell(" ".repeat(10) + "2. Author" + " ".repeat(10));
-        table.addCell(" ".repeat(10) + "3. USER" + " ".repeat(10));
-        table.addCell(" ".repeat(10) + "4. Backup and Recovery" + " ".repeat(10));
-        table.addCell( " ".repeat(10) + "5. Generate Report" + " ".repeat(10) );
-        table.addCell(" ".repeat(10) + "6. Logout" + " ".repeat(10));
+        Table table = new Table(2, BorderStyle.UNICODE_BOX_DOUBLE_BORDER_WIDE, ShownBorders.SURROUND);
+        table.addCell(" ".repeat(5) + "1. Book" + " ".repeat(5));
+        table.addCell(" ".repeat(5) + "2. Author" + " ".repeat(5));
+        table.addCell(" ".repeat(5) + "3. USER" + " ".repeat(5));
+        table.addCell(" ".repeat(5) + "4. Backup and Recovery" + " ".repeat(5));
+        table.addCell( " ".repeat(5) + "5. Generate Report" + " ".repeat(5) );
+        table.addCell(" ".repeat(5) + "6. Category" + " ".repeat(5));
+        table.addCell(" ".repeat(5) + "7. Logout" + " ".repeat(5));
         System.out.println();
         System.out.println(table.render());
         System.out.println();
@@ -59,12 +60,12 @@ public class LibrarianView {
     }
 
     public void authorMenu( LibrarianUtil librarianUtil ){
-        Table table = new Table(4, BorderStyle.UNICODE_BOX_DOUBLE_BORDER_WIDE, ShownBorders.ALL);
-        table.addCell(" ".repeat(10) + "1. Add Author" + " ".repeat(10));
-        table.addCell(" ".repeat(10) + "2. Update Author" + " ".repeat(10));
-        table.addCell(" ".repeat(10) + "3. Search Author" + " ".repeat(10));
-        table.addCell(" ".repeat(10) + "4. Show Author" + " ".repeat(10));
-        table.addCell(" ".repeat(10) + "5. Exit" + " ".repeat(10));
+        Table table = new Table(2, BorderStyle.UNICODE_BOX_DOUBLE_BORDER_WIDE, ShownBorders.SURROUND);
+        table.addCell(" ".repeat(5) + "1. Add Author" + " ".repeat(5));
+        table.addCell(" ".repeat(5) + "2. Update Author" + " ".repeat(5));
+        table.addCell(" ".repeat(5) + "3. Search Author" + " ".repeat(5));
+        table.addCell(" ".repeat(5) + "4. Show Author" + " ".repeat(5));
+        table.addCell(" ".repeat(5) + "5. Exit" + " ".repeat(5));
         System.out.println();
         System.out.println(table.render());
         System.out.println();
@@ -80,7 +81,7 @@ public class LibrarianView {
 
     public void updateAuthorByIdView( Author author ){
         Table table = new Table(1, BorderStyle.UNICODE_BOX_DOUBLE_BORDER_WIDE, ShownBorders.ALL);
-        table.addCell(" ".repeat(10) + "Update Author By Id" + " ".repeat(10));
+        table.addCell(" ".repeat(5) + "Update Author By Id" + " ".repeat(5));
         System.out.println();
         System.out.println(table.render());
         System.out.println();
@@ -130,9 +131,9 @@ public class LibrarianView {
             table.addCell("No Author Yet!", new CellStyle(CellStyle.HorizontalAlign.CENTER));
         }else{
             Table table = new Table(3, BorderStyle.UNICODE_BOX_DOUBLE_BORDER_WIDE, ShownBorders.ALL);
-            table.addCell(" ".repeat(10) + "Id" + " ".repeat(10));
-            table.addCell(" ".repeat(10) + "Firstname" + " ".repeat(10));
-            table.addCell(" ".repeat(10) + "Lastname" + " ".repeat(10));
+            table.addCell(" ".repeat(5) + "Id" + " ".repeat(5));
+            table.addCell(" ".repeat(5) + "Firstname" + " ".repeat(5));
+            table.addCell(" ".repeat(5) + "Lastname" + " ".repeat(5));
             authors.forEach(author -> {
                 table.addCell(author.getId().toString(), new CellStyle(CellStyle.HorizontalAlign.CENTER));
                 table.addCell(author.getFirstName(), new CellStyle(CellStyle.HorizontalAlign.CENTER));
@@ -142,12 +143,12 @@ public class LibrarianView {
         }
         if( display ){
             Table table = new Table( 2, BorderStyle.UNICODE_BOX_DOUBLE_BORDER_WIDE, ShownBorders.ALL );
-            table.addCell( " ".repeat(10) + "Current Page" + " ".repeat(10) );
-            table.addCell( " ".repeat(10) + currentPage + " ".repeat(10) );
-            table.addCell( " ".repeat(10) + "Total Of Page" + " ".repeat(10) );
-            table.addCell( " ".repeat(10) + totalPage + " ".repeat(10) );
-            table.addCell( " ".repeat(10) + "Limit Display" + " ".repeat(10) );
-            table.addCell( " ".repeat(10) + limit + " ".repeat(10) );
+            table.addCell( " ".repeat(5) + "Current Page" + " ".repeat(5) );
+            table.addCell( " ".repeat(5) + currentPage + " ".repeat(5) );
+            table.addCell( " ".repeat(5) + "Total Of Page" + " ".repeat(5) );
+            table.addCell( " ".repeat(5) + totalPage + " ".repeat(5) );
+            table.addCell( " ".repeat(5) + "Limit Display" + " ".repeat(5) );
+            table.addCell( " ".repeat(5) + limit + " ".repeat(5) );
             System.out.println();
             System.out.println(table.render());
             System.out.println();
@@ -156,9 +157,9 @@ public class LibrarianView {
 
     public void searchAuthView(LibrarianUtil librarianUtil){
         Table table = new Table(4, BorderStyle.UNICODE_BOX_DOUBLE_BORDER_WIDE, ShownBorders.ALL);
-        table.addCell(" ".repeat(10) + "1. Search Author By Id" + " ".repeat(10));
-        table.addCell(" ".repeat(10) + "2. Search Author By Name" + " ".repeat(10));
-        table.addCell(" ".repeat(10) + "3. Exit" + " ".repeat(10));
+        table.addCell(" ".repeat(5) + "1. Search Author By Id" + " ".repeat(5));
+        table.addCell(" ".repeat(5) + "2. Search Author By Name" + " ".repeat(5));
+        table.addCell(" ".repeat(5) + "3. Exit" + " ".repeat(5));
         System.out.println();
         System.out.println(table.render());
         System.out.println();
@@ -190,14 +191,14 @@ public class LibrarianView {
         }
     }
     public void showAuthorMenu( LibrarianUtil librarianUtil ){
-        Table table = new Table(4, BorderStyle.UNICODE_BOX_DOUBLE_BORDER_WIDE, ShownBorders.ALL);
-        table.addCell(" ".repeat(10) + "1. Next" + " ".repeat(10));
-        table.addCell(" ".repeat(10) + "2. Previous" + " ".repeat(10));
-        table.addCell(" ".repeat(10) + "3. Goto" + " ".repeat(10));
-        table.addCell(" ".repeat(10) + "4. First" + " ".repeat(10));
-        table.addCell(" ".repeat(10) + "5. Last" + " ".repeat(10));
-        table.addCell(" ".repeat(10) + "6. Set Limit" + " ".repeat(10));
-        table.addCell(" ".repeat(10) + "7. Exit" + " ".repeat(10));
+        Table table = new Table(2, BorderStyle.UNICODE_BOX_DOUBLE_BORDER_WIDE, ShownBorders.SURROUND);
+        table.addCell(" ".repeat(5) + "1. Next" + " ".repeat(5));
+        table.addCell(" ".repeat(5) + "2. Previous" + " ".repeat(5));
+        table.addCell(" ".repeat(5) + "3. Goto" + " ".repeat(5));
+        table.addCell(" ".repeat(5) + "4. First" + " ".repeat(5));
+        table.addCell(" ".repeat(5) + "5. Last" + " ".repeat(5));
+        table.addCell(" ".repeat(5) + "6. Set Limit" + " ".repeat(5));
+        table.addCell(" ".repeat(5) + "7. Exit" + " ".repeat(5));
         System.out.println();
         System.out.println(table.render());
         System.out.println();
@@ -234,8 +235,26 @@ public class LibrarianView {
             book.setDescription( scanner.nextLine() );
             System.out.print("\t-->Enter author id : ");
             author.setId( Long.parseLong(scanner.nextLine()) );
+            Author auth = librarianService.searchAuthorById( author.getId() );
+            if( auth == null ){
+                HelperView.error("Author id not exist!");
+                return;
+            }else{
+                List<Author> auths = new ArrayList<>();
+                auths.add( auth );
+                authorView( auths, 1,1,1,false );
+            }
             System.out.print("\t-->Enter category id : ");
             category.setId( Long.parseLong( scanner.nextLine() ) );
+            Category cate = librarianService.searchCategoryById( category.getId() );
+            if( cate == null ){
+                HelperView.error("Category id not exist!");
+                return;
+            }else{
+                List<Category> categories = new ArrayList<>();
+                categories.add( cate );
+                categoryView( categories, 1,1,1,false );
+            }
             book.setAuthor( author );
             book.setCategory( category );
         }catch ( Exception ex ){
@@ -244,13 +263,13 @@ public class LibrarianView {
     }
 
     public void bookMenu( LibrarianUtil librarianUtil ){
-        Table table = new Table(4, BorderStyle.UNICODE_BOX_DOUBLE_BORDER_WIDE, ShownBorders.ALL);
-        table.addCell(" ".repeat(10) + "1. Add Book" + " ".repeat(10));
-        table.addCell(" ".repeat(10) + "2. Update Book" + " ".repeat(10));
-        table.addCell(" ".repeat(10) + "3. Search Book" + " ".repeat(10));
-        table.addCell(" ".repeat(10) + "4. Show Book" + " ".repeat(10));
-        table.addCell(" ".repeat(10) + "5. Borrow Book" + " ".repeat(10));
-        table.addCell(" ".repeat(10) + "6. Exit" + " ".repeat(10));
+        Table table = new Table(2, BorderStyle.UNICODE_BOX_DOUBLE_BORDER_WIDE, ShownBorders.SURROUND);
+        table.addCell(" ".repeat(5) + "1. Add Book" + " ".repeat(5));
+        table.addCell(" ".repeat(5) + "2. Update Book" + " ".repeat(5));
+        table.addCell(" ".repeat(5) + "3. Search Book" + " ".repeat(5));
+        table.addCell(" ".repeat(5) + "4. Show Book" + " ".repeat(5));
+        table.addCell(" ".repeat(5) + "5. Borrow And Return Book" + " ".repeat(5));
+        table.addCell(" ".repeat(5) + "6. Exit" + " ".repeat(5));
         System.out.println();
         System.out.println(table.render());
         System.out.println();
@@ -273,13 +292,13 @@ public class LibrarianView {
             System.out.println();
         }else{
             Table table = new Table(7, BorderStyle.UNICODE_BOX_DOUBLE_BORDER_WIDE, ShownBorders.ALL);
-            table.addCell(" ".repeat(8) + "Id" + " ".repeat(8));
-            table.addCell(" ".repeat(8) + "Title" + " ".repeat(8));
-            table.addCell(" ".repeat(8) + "Quantity" + " ".repeat(8));
-            table.addCell(" ".repeat(8) + "Author Name" + " ".repeat(8));
-            table.addCell(" ".repeat(8) + "Added By" + " ".repeat(8));
-            table.addCell(" ".repeat(8) + "Category" + " ".repeat(8));
-            table.addCell(" ".repeat(8) + "Description" + " ".repeat(8));
+            table.addCell(" ".repeat(5) + "Id" + " ".repeat(5));
+            table.addCell(" ".repeat(5) + "Title" + " ".repeat(5));
+            table.addCell(" ".repeat(5) + "Quantity" + " ".repeat(5));
+            table.addCell(" ".repeat(5) + "Author Name" + " ".repeat(5));
+            table.addCell(" ".repeat(5) + "Added By" + " ".repeat(5));
+            table.addCell(" ".repeat(5) + "Category" + " ".repeat(5));
+            table.addCell(" ".repeat(5) + "Description" + " ".repeat(5));
             books.forEach(book -> {
                 table.addCell(book.getId().toString(), new CellStyle(CellStyle.HorizontalAlign.CENTER));
                 table.addCell(book.getTitle(), new CellStyle(CellStyle.HorizontalAlign.CENTER));
@@ -293,12 +312,12 @@ public class LibrarianView {
         }
         if( display ){
             Table table = new Table( 2, BorderStyle.UNICODE_BOX_DOUBLE_BORDER_WIDE, ShownBorders.ALL );
-            table.addCell( " ".repeat(10) + "Current Page" + " ".repeat(10) );
-            table.addCell( " ".repeat(10) + currentPage + " ".repeat(10) );
-            table.addCell( " ".repeat(10) + "Total Of Page" + " ".repeat(10) );
-            table.addCell( " ".repeat(10) + totalPage + " ".repeat(10) );
-            table.addCell( " ".repeat(10) + "Limit Display" + " ".repeat(10) );
-            table.addCell( " ".repeat(10) + limit + " ".repeat(10) );
+            table.addCell( " ".repeat(5) + "Current Page" + " ".repeat(5) );
+            table.addCell( " ".repeat(5) + currentPage + " ".repeat(5) );
+            table.addCell( " ".repeat(5) + "Total Of Page" + " ".repeat(5) );
+            table.addCell( " ".repeat(5) + totalPage + " ".repeat(5) );
+            table.addCell( " ".repeat(5) + "Limit Display" + " ".repeat(5) );
+            table.addCell( " ".repeat(5) + limit + " ".repeat(5) );
             System.out.println();
             System.out.println(table.render());
             System.out.println();
@@ -307,11 +326,11 @@ public class LibrarianView {
 
     public void searchBookView(LibrarianUtil librarianUtil){
         Table table = new Table(4, BorderStyle.UNICODE_BOX_DOUBLE_BORDER_WIDE, ShownBorders.ALL);
-        table.addCell(" ".repeat(10) + "1. Search Book By Id" + " ".repeat(10));
-        table.addCell(" ".repeat(10) + "2. Search Book By Title" + " ".repeat(10));
-        table.addCell(" ".repeat(10) + "3. Search Book By Author" + " ".repeat(10));
-        table.addCell(" ".repeat(10) + "4. Search Book By Category" + " ".repeat(10));
-        table.addCell(" ".repeat(10) + "5. Exit" + " ".repeat(10));
+        table.addCell(" ".repeat(5) + "1. Search Book By Id" + " ".repeat(5));
+        table.addCell(" ".repeat(5) + "2. Search Book By Title" + " ".repeat(5));
+        table.addCell(" ".repeat(5) + "3. Search Book By Author" + " ".repeat(5));
+        table.addCell(" ".repeat(5) + "4. Search Book By Category" + " ".repeat(5));
+        table.addCell(" ".repeat(5) + "5. Exit" + " ".repeat(5));
         System.out.println();
         System.out.println(table.render());
         System.out.println();
@@ -341,9 +360,9 @@ public class LibrarianView {
 
     public void backupAndRecoveryView(LibrarianUtil librarianUtil){
         Table table = new Table(4, BorderStyle.UNICODE_BOX_DOUBLE_BORDER_WIDE, ShownBorders.ALL);
-        table.addCell(" ".repeat(10) + "1. Backup" + " ".repeat(10));
-        table.addCell(" ".repeat(10) + "2. Recovery" + " ".repeat(10));
-        table.addCell(" ".repeat(10) + "3. Exit" + " ".repeat(10));
+        table.addCell(" ".repeat(5) + "1. Backup" + " ".repeat(5));
+        table.addCell(" ".repeat(5) + "2. Recovery" + " ".repeat(5));
+        table.addCell(" ".repeat(5) + "3. Exit" + " ".repeat(5));
         System.out.println();
         System.out.println(table.render());
         System.out.println();
@@ -358,15 +377,15 @@ public class LibrarianView {
     }
 
     public void showBookMenu( LibrarianUtil librarianUtil ){
-        Table table = new Table(4, BorderStyle.UNICODE_BOX_DOUBLE_BORDER_WIDE, ShownBorders.ALL);
-        table.addCell(" ".repeat(10) + "1. Next" + " ".repeat(10));
-        table.addCell(" ".repeat(10) + "2. Previous" + " ".repeat(10));
-        table.addCell(" ".repeat(10) + "3. Goto" + " ".repeat(10));
-        table.addCell(" ".repeat(10) + "4. First" + " ".repeat(10));
-        table.addCell(" ".repeat(10) + "5. Last" + " ".repeat(10));
-        table.addCell(" ".repeat(10) + "6. Set Limit" + " ".repeat(10));
-        table.addCell(" ".repeat(10) + "7. Report Book" + " ".repeat(10));
-        table.addCell(" ".repeat(10) + "8. Exit" + " ".repeat(10));
+        Table table = new Table(2, BorderStyle.UNICODE_BOX_DOUBLE_BORDER_WIDE, ShownBorders.SURROUND);
+        table.addCell(" ".repeat(5) + "1. Next" + " ".repeat(5));
+        table.addCell(" ".repeat(5) + "2. Previous" + " ".repeat(5));
+        table.addCell(" ".repeat(5) + "3. Goto" + " ".repeat(5));
+        table.addCell(" ".repeat(5) + "4. First" + " ".repeat(5));
+        table.addCell(" ".repeat(5) + "5. Last" + " ".repeat(5));
+        table.addCell(" ".repeat(5) + "6. Set Limit" + " ".repeat(5));
+        table.addCell(" ".repeat(5) + "7. Report Book" + " ".repeat(5));
+        table.addCell(" ".repeat(5) + "8. Exit" + " ".repeat(5));
         System.out.println();
         System.out.println(table.render());
         System.out.println();
@@ -391,11 +410,13 @@ public class LibrarianView {
 
     }
 
-    public void borrowMenu( LibrarianUtil librarianUtil ){
-        Table table = new Table(4, BorderStyle.UNICODE_BOX_DOUBLE_BORDER_WIDE, ShownBorders.ALL);
-        table.addCell(" ".repeat(10) + "1. List Borrow" + " ".repeat(10));
-        table.addCell(" ".repeat(10) + "2. Confirm Borrow" + " ".repeat(10));
-        table.addCell(" ".repeat(10) + "3. Exit" + " ".repeat(10));
+    public void borrowAndReturnMenu( LibrarianUtil librarianUtil ){
+        Table table = new Table(2, BorderStyle.UNICODE_BOX_DOUBLE_BORDER_WIDE, ShownBorders.SURROUND);
+        table.addCell(" ".repeat(5) + "1. List Borrow" + " ".repeat(5));
+        table.addCell(" ".repeat(5) + "2. List Return" + " ".repeat(5));
+        table.addCell(" ".repeat(5) + "3. Confirm Borrow" + " ".repeat(5));
+        table.addCell(" ".repeat(5) + "4. Confirm Return" + " ".repeat(5));
+        table.addCell(" ".repeat(5) + "5. Exit" + " ".repeat(5));
         System.out.println();
         System.out.println(table.render());
         System.out.println();
@@ -410,11 +431,11 @@ public class LibrarianView {
     }
 
     public void bookUpdateMenu(LibrarianUtil librarianUtil){
-        Table table = new Table(4, BorderStyle.UNICODE_BOX_DOUBLE_BORDER_WIDE, ShownBorders.ALL);
-        table.addCell(" ".repeat(10) + "1. Update Book Title" + " ".repeat(10));
-        table.addCell(" ".repeat(10) + "2. Update Book Quantity" + " ".repeat(10));
-        table.addCell(" ".repeat(10) + "3. Update Book Author" + " ".repeat(10));
-        table.addCell(" ".repeat(10) + "4. Exit" + " ".repeat(10));
+        Table table = new Table(2, BorderStyle.UNICODE_BOX_DOUBLE_BORDER_WIDE, ShownBorders.SURROUND);
+        table.addCell(" ".repeat(5) + "1. Update Book Title" + " ".repeat(5));
+        table.addCell(" ".repeat(5) + "2. Update Book Quantity" + " ".repeat(5));
+        table.addCell(" ".repeat(5) + "3. Update Book Author" + " ".repeat(5));
+        table.addCell(" ".repeat(5) + "4. Exit" + " ".repeat(5));
         System.out.println();
         System.out.println(table.render());
         System.out.println();
@@ -514,25 +535,316 @@ public class LibrarianView {
             System.out.println();
         }else{
             Table table = new Table(7, BorderStyle.UNICODE_BOX_DOUBLE_BORDER_WIDE, ShownBorders.ALL);
-            table.addCell(" ".repeat(8) + "Id" + " ".repeat(8));
-            table.addCell(" ".repeat(8) + "Name" + " ".repeat(8));
+            table.addCell(" ".repeat(5) + "User Id" + " ".repeat(5));
+            table.addCell(" ".repeat(5) + "Username" + " ".repeat(5));
+            table.addCell(" ".repeat(5) + "Email" + " ".repeat(5));
+            table.addCell(" ".repeat(5) + "Book Title" + " ".repeat(5));
+            table.addCell(" ".repeat(5) + "Borrow" + " ".repeat(5));
+            table.addCell(" ".repeat(5) + "Return" + " ".repeat(5));
+            table.addCell(" ".repeat(5) + "Borrow At" + " ".repeat(5));
             users.forEach(user -> {
                 table.addCell(user.getId().toString(), new CellStyle(CellStyle.HorizontalAlign.CENTER));
                 table.addCell(user.getUsername() , new CellStyle(CellStyle.HorizontalAlign.CENTER));
+                table.addCell(user.getEmail() , new CellStyle(CellStyle.HorizontalAlign.CENTER));
+                table.addCell(user.getBorrow().getBook().getTitle() , new CellStyle(CellStyle.HorizontalAlign.CENTER));
+                table.addCell( user.getBorrow().isBorrow() ? "Borrow" : "Not Confirm Yet" , new CellStyle(CellStyle.HorizontalAlign.CENTER));
+                table.addCell(user.getBorrow().isReturn() ? "Return" : "Not Return Yet" , new CellStyle(CellStyle.HorizontalAlign.CENTER));
+                table.addCell(user.getBorrow().getBorrowDate().toString() , new CellStyle(CellStyle.HorizontalAlign.CENTER));
             });
             System.out.println(table.render());
         }
         if( display ){
             Table table = new Table( 2, BorderStyle.UNICODE_BOX_DOUBLE_BORDER_WIDE, ShownBorders.ALL );
-            table.addCell( " ".repeat(10) + "Current Page" + " ".repeat(10) );
-            table.addCell( " ".repeat(10) + currentPage + " ".repeat(10) );
-            table.addCell( " ".repeat(10) + "Total Of Page" + " ".repeat(10) );
-            table.addCell( " ".repeat(10) + totalPage + " ".repeat(10) );
-            table.addCell( " ".repeat(10) + "Limit Display" + " ".repeat(10) );
-            table.addCell( " ".repeat(10) + limit + " ".repeat(10) );
+            table.addCell( " ".repeat(5) + "Current Page" + " ".repeat(5) );
+            table.addCell( " ".repeat(5) + currentPage + " ".repeat(5) );
+            table.addCell( " ".repeat(5) + "Total Of Page" + " ".repeat(5) );
+            table.addCell( " ".repeat(5) + totalPage + " ".repeat(5) );
+            table.addCell( " ".repeat(5) + "Limit Display" + " ".repeat(5) );
+            table.addCell( " ".repeat(5) + limit + " ".repeat(5) );
             System.out.println();
             System.out.println(table.render());
             System.out.println();
+        }
+    }
+    public void borrowView( List<Borrow> borrows, int currentPage, int totalPage, int limit, boolean display ){
+        if (borrows == null || borrows.isEmpty()){
+            Table table = new Table(1, BorderStyle.UNICODE_BOX_DOUBLE_BORDER_WIDE, ShownBorders.ALL);
+            table.addCell("No Brrow Book Yet!", new CellStyle(CellStyle.HorizontalAlign.CENTER));
+            System.out.println();
+            System.out.println(table.render());
+            System.out.println();
+        }else{
+            Table table = new Table(9, BorderStyle.UNICODE_BOX_DOUBLE_BORDER_WIDE, ShownBorders.ALL);
+            table.addCell(" ".repeat(5) + "Borrow Id" + " ".repeat(5));
+            table.addCell(" ".repeat(5) + "User Id" + " ".repeat(5));
+            table.addCell(" ".repeat(5) + "Username" + " ".repeat(5));
+            table.addCell(" ".repeat(5) + "Book Title" + " ".repeat(5));
+            table.addCell(" ".repeat(5) + "Quantity" + " ".repeat(5));
+            table.addCell(" ".repeat(5) + "Borrow Status" + " ".repeat(5));
+            table.addCell(" ".repeat(5) + "Return Status" + " ".repeat(5));
+            table.addCell(" ".repeat(5) + "Borrow at" + " ".repeat(5));
+            table.addCell(" ".repeat(5) + "Deadline at" + " ".repeat(5));
+            borrows.forEach(borrow -> {
+                table.addCell(borrow.getId().toString(), new CellStyle(CellStyle.HorizontalAlign.CENTER));
+                table.addCell(borrow.getUser().getId().toString(), new CellStyle(CellStyle.HorizontalAlign.CENTER));
+                table.addCell(borrow.getUser().getUsername(), new CellStyle(CellStyle.HorizontalAlign.CENTER));
+                table.addCell(borrow.getBook().getTitle(), new CellStyle(CellStyle.HorizontalAlign.CENTER));
+                table.addCell(borrow.getQuantity().toString(), new CellStyle(CellStyle.HorizontalAlign.CENTER));
+                //Borrow Status
+                table.addCell( borrow.isBorrow() ? "Is Borrow" : "Not Confirm Yet" , new CellStyle(CellStyle.HorizontalAlign.CENTER));
+                //Return Status
+                table.addCell(borrow.isReturn() ? "Is Return" : "Not Return Yet", new CellStyle(CellStyle.HorizontalAlign.CENTER));
+                table.addCell(borrow.getStartBorrowDate().toString(), new CellStyle(CellStyle.HorizontalAlign.CENTER));
+                table.addCell(borrow.getDeadlineBorrowDate().toString(), new CellStyle(CellStyle.HorizontalAlign.CENTER));
+            });
+            System.out.println(table.render());
+        }
+        if( display ){
+            Table table = new Table( 2, BorderStyle.UNICODE_BOX_DOUBLE_BORDER_WIDE, ShownBorders.ALL );
+            table.addCell( " ".repeat(5) + "Current Page" + " ".repeat(5) );
+            table.addCell( " ".repeat(5) + currentPage + " ".repeat(5) );
+            table.addCell( " ".repeat(5) + "Total Of Page" + " ".repeat(5) );
+            table.addCell( " ".repeat(5) + totalPage + " ".repeat(5) );
+            table.addCell( " ".repeat(5) + "Limit Display" + " ".repeat(5) );
+            table.addCell( " ".repeat(5) + limit + " ".repeat(5) );
+            System.out.println();
+            System.out.println(table.render());
+            System.out.println();
+        }
+    }
+    public void returnView( List<Return> returns, int currentPage, int totalPage, int limit, boolean display ){
+        if (returns == null || returns.isEmpty()){
+            Table table = new Table(1, BorderStyle.UNICODE_BOX_DOUBLE_BORDER_WIDE, ShownBorders.ALL);
+            table.addCell("No Return Book Yet!", new CellStyle(CellStyle.HorizontalAlign.CENTER));
+            System.out.println();
+            System.out.println(table.render());
+            System.out.println();
+        }else{
+            Table table = new Table(9, BorderStyle.UNICODE_BOX_DOUBLE_BORDER_WIDE, ShownBorders.ALL);
+            table.addCell(" ".repeat(5) + "Return Id" + " ".repeat(5));
+            table.addCell(" ".repeat(5) + "Book Id" + " ".repeat(5));
+            table.addCell(" ".repeat(5) + "User Id" + " ".repeat(5));
+            table.addCell(" ".repeat(5) + "Username" + " ".repeat(5));
+            table.addCell(" ".repeat(5) + "Book Title" + " ".repeat(5));
+            table.addCell(" ".repeat(5) + "Quantity" + " ".repeat(5));
+            table.addCell(" ".repeat(5) + "Return Status" + " ".repeat(5));
+            table.addCell(" ".repeat(5) + "Return at" + " ".repeat(5));
+            table.addCell(" ".repeat(5) + "Deadline at" + " ".repeat(5));
+            returns.forEach(res -> {
+                table.addCell(res.getId().toString(), new CellStyle(CellStyle.HorizontalAlign.CENTER));//Return Id
+                table.addCell(res.getBorrow().getBook().getId().toString(), new CellStyle(CellStyle.HorizontalAlign.CENTER));//Book Id
+                table.addCell(res.getBorrow().getUser().getId().toString(), new CellStyle(CellStyle.HorizontalAlign.CENTER));//User Id
+                table.addCell(res.getBorrow().getUser().getUsername(), new CellStyle(CellStyle.HorizontalAlign.CENTER));//Username
+                table.addCell(res.getBorrow().getBook().getTitle(), new CellStyle(CellStyle.HorizontalAlign.CENTER));//Book Title
+                table.addCell(res.getBorrow().getQuantity().toString(), new CellStyle(CellStyle.HorizontalAlign.CENTER));//Borrow Quantity
+                table.addCell(res.getBorrow().isReturn() ? "Returned" : "Not Return yet" , new CellStyle(CellStyle.HorizontalAlign.CENTER));//Borrow Status
+                table.addCell(res.getReturnDate().toString() , new CellStyle(CellStyle.HorizontalAlign.CENTER));//Return Date
+                table.addCell(res.getBorrow().getDeadlineBorrowDate().toString() , new CellStyle(CellStyle.HorizontalAlign.CENTER));//Deadline
+            });
+            System.out.println(table.render());
+        }
+        if( display ){
+            Table table = new Table( 2, BorderStyle.UNICODE_BOX_DOUBLE_BORDER_WIDE, ShownBorders.ALL );
+            table.addCell( " ".repeat(5) + "Current Page" + " ".repeat(5) );
+            table.addCell( " ".repeat(5) + currentPage + " ".repeat(5) );
+            table.addCell( " ".repeat(5) + "Total Of Page" + " ".repeat(5) );
+            table.addCell( " ".repeat(5) + totalPage + " ".repeat(5) );
+            table.addCell( " ".repeat(5) + "Limit Display" + " ".repeat(5) );
+            table.addCell( " ".repeat(5) + limit + " ".repeat(5) );
+            System.out.println();
+            System.out.println(table.render());
+            System.out.println();
+        }
+    }
+    public void categoryView( List<Category> categories, int currentPage, int totalPage, int limit, boolean display ){
+        if (categories == null || categories.isEmpty()){
+            Table table = new Table(1, BorderStyle.UNICODE_BOX_DOUBLE_BORDER_WIDE, ShownBorders.ALL);
+            table.addCell("No Book Yet!", new CellStyle(CellStyle.HorizontalAlign.CENTER));
+            System.out.println();
+            System.out.println(table.render());
+            System.out.println();
+        }else{
+            Table table = new Table(3, BorderStyle.UNICODE_BOX_DOUBLE_BORDER_WIDE, ShownBorders.ALL);
+            table.addCell(" ".repeat(5) + "Id" + " ".repeat(5));
+            table.addCell(" ".repeat(5) + "Name" + " ".repeat(5));
+            table.addCell(" ".repeat(5) + "Created at" + " ".repeat(5));
+            categories.forEach(category -> {
+                table.addCell(category.getId().toString(), new CellStyle(CellStyle.HorizontalAlign.CENTER));
+                table.addCell(category.getName() , new CellStyle(CellStyle.HorizontalAlign.CENTER));
+                table.addCell(category.getCreatedDate().toString() , new CellStyle(CellStyle.HorizontalAlign.CENTER));
+            });
+            System.out.println(table.render());
+        }
+        if( display ){
+            Table table = new Table( 2, BorderStyle.UNICODE_BOX_DOUBLE_BORDER_WIDE, ShownBorders.ALL );
+            table.addCell( " ".repeat(5) + "Current Page" + " ".repeat(5) );
+            table.addCell( " ".repeat(5) + currentPage + " ".repeat(5) );
+            table.addCell( " ".repeat(5) + "Total Of Page" + " ".repeat(5) );
+            table.addCell( " ".repeat(5) + totalPage + " ".repeat(5) );
+            table.addCell( " ".repeat(5) + "Limit Display" + " ".repeat(5) );
+            table.addCell( " ".repeat(5) + limit + " ".repeat(5) );
+            System.out.println();
+            System.out.println(table.render());
+            System.out.println();
+        }
+    }
+
+    public void userView( List<User> users, int currentPage, int totalPage, int limit, boolean display ){
+        if (users == null || users.isEmpty()){
+            Table table = new Table(1, BorderStyle.UNICODE_BOX_DOUBLE_BORDER_WIDE, ShownBorders.ALL);
+            table.addCell("No Book Yet!", new CellStyle(CellStyle.HorizontalAlign.CENTER));
+            System.out.println();
+            System.out.println(table.render());
+            System.out.println();
+        }else{
+            Table table = new Table(4, BorderStyle.UNICODE_BOX_DOUBLE_BORDER_WIDE, ShownBorders.ALL);
+            table.addCell(" ".repeat(5) + "Id" + " ".repeat(5));
+            table.addCell(" ".repeat(5) + "Name" + " ".repeat(5));
+            table.addCell(" ".repeat(5) + "Email" + " ".repeat(5));
+            table.addCell(" ".repeat(5) + "Disable status" + " ".repeat(5));
+            users.forEach(user -> {
+                table.addCell(user.getId().toString(), new CellStyle(CellStyle.HorizontalAlign.CENTER));
+                table.addCell(user.getUsername() , new CellStyle(CellStyle.HorizontalAlign.CENTER));
+                table.addCell(user.getEmail() , new CellStyle(CellStyle.HorizontalAlign.CENTER));
+                table.addCell(user.getDisable() ? "Disabled" : "false" , new CellStyle(CellStyle.HorizontalAlign.CENTER));
+            });
+            System.out.println(table.render());
+        }
+        if( display ){
+            Table table = new Table( 2, BorderStyle.UNICODE_BOX_DOUBLE_BORDER_WIDE, ShownBorders.ALL );
+            table.addCell( " ".repeat(5) + "Current Page" + " ".repeat(5) );
+            table.addCell( " ".repeat(5) + currentPage + " ".repeat(5) );
+            table.addCell( " ".repeat(5) + "Total Of Page" + " ".repeat(5) );
+            table.addCell( " ".repeat(5) + totalPage + " ".repeat(5) );
+            table.addCell( " ".repeat(5) + "Limit Display" + " ".repeat(5) );
+            table.addCell( " ".repeat(5) + limit + " ".repeat(5) );
+            System.out.println();
+            System.out.println(table.render());
+            System.out.println();
+        }
+    }
+    public void confirmReturnView(User user, Book book){
+        try{
+            System.out.print("\t-->Enter user id : ");
+            user.setId( Long.parseLong(scanner.nextLine()) );
+            Optional<User> u = librarianService.searchUserById( user.getId() );
+            if( u.isEmpty() ){
+                HelperView.error(String.format("User id(%s) not exist" , user.getId()));
+                return;
+            }else{
+                List<User> users = new ArrayList<>();
+                users.add(u.get());
+                userView( users, 1,1,1,false );
+            }
+            System.out.print("\t-->Enter book id : ");
+            book.setId( Long.parseLong(scanner.nextLine()) );
+            Optional<Book> b = librarianService.searchBookById( book.getId() );
+            if( b.isEmpty() ){
+                HelperView.error(String.format("Book id(%s) not exist" , user.getId()));
+                return;
+            }else{
+                List<Book> books = new ArrayList<>();
+                books.add(b.get());
+                bookView( books, 1,1,1,false );
+            }
+        }catch (Exception ex){
+            System.out.println(ex.getMessage());
+            HelperView.error("Something wrong with your input!\n*Note id number only");
+        }
+
+    }
+
+    public void userMenu(LibrarianUtil librarianUtil){
+        Table table = new Table(2, BorderStyle.UNICODE_BOX_DOUBLE_BORDER_WIDE, ShownBorders.SURROUND);
+        table.addCell(" ".repeat(5) + "1. List user" + " ".repeat(5));
+        table.addCell(" ".repeat(5) + "2. Search User" + " ".repeat(5));
+        table.addCell(" ".repeat(5) + "3. Add User to blacklist" + " ".repeat(5));
+        table.addCell(" ".repeat(5) + "4. Remove User from blacklist" + " ".repeat(5));
+        table.addCell(" ".repeat(5) + "5. Exit" + " ".repeat(5));
+        System.out.println();
+        System.out.println(table.render());
+        System.out.println();
+        System.out.print("\t-->Enter your option : ");
+        try{
+            librarianUtil.setOption( Integer.parseInt(scanner.nextLine()) );
+        }
+        catch (NumberFormatException ex){
+            System.err.println(ex.getMessage());
+            librarianUtil.setOption(0);
+        }
+
+    }
+
+    public void userSearchMenu(LibrarianUtil librarianUtil){
+        Table table = new Table(2, BorderStyle.UNICODE_BOX_DOUBLE_BORDER_WIDE, ShownBorders.SURROUND);
+        table.addCell(" ".repeat(5) + "1. Search User By Id" + " ".repeat(5));
+        table.addCell(" ".repeat(5) + "2. Search User By Username" + " ".repeat(5));
+        table.addCell(" ".repeat(5) + "3. Exit" + " ".repeat(5));
+        System.out.println();
+        System.out.println(table.render());
+        System.out.println();
+        System.out.print("\t-->Enter your option : ");
+        try{
+            librarianUtil.setOption( Integer.parseInt(scanner.nextLine()) );
+        }
+        catch (NumberFormatException ex){
+            System.err.println(ex.getMessage());
+            librarianUtil.setOption(0);
+        }
+    }
+    public void userSearchByIdView(User user){
+        try{
+            System.out.print("\t--> Search user id : ");
+            user.setId( Long.parseLong( scanner.nextLine() ) );
+        }
+        catch (Exception ex){
+            HelperView.error("User Id enter only number");
+        }
+    }
+    public void userSearchByUsernameView(User user){
+        try{
+            System.out.print("\t--> Search username : ");
+            user.setUsername( scanner.nextLine() );
+        }
+        catch (Exception ex){
+            HelperView.error("Something went wrong");
+        }
+    }
+
+    public void addUserToBlackListView(User user, Book book, AtomicReference<String> message){
+        try{
+            //Enter User Id
+            System.out.print("\t-->Enter user id : ");
+            user.setId( Long.parseLong( scanner.nextLine() ) );
+            Optional<User> us = librarianService.searchUserById(user.getId() );
+            if( us.isPresent() ){
+                List<User> users = new ArrayList<>();
+                users.add( us.get() );
+                userView(users, 1,1,1, false);
+            }else{
+                HelperView.error(String.format("User id(%s) not exist", user.getId()));
+                return;
+            }
+            //Enter Book Id
+            System.out.print("\t-->Enter book id : ");
+            book.setId( Long.parseLong( scanner.nextLine() ) );
+            Optional<Book> bk = librarianService.searchBookById(book.getId() );
+            if( bk.isPresent() ){
+                List<Book> books = new ArrayList<>();
+                books.add( bk.get() );
+                bookView(books, 1,1,1, false);
+            }else{
+                HelperView.error(String.format("Book id(%s) not exist", book.getId()));
+                return;
+            }
+            //Book Qty
+            System.out.print("\t-->Enter book quantity : ");
+            book.setQuantity( Integer.parseInt( scanner.nextLine() ) );
+            //Message
+            System.out.print("\t-->Enter message : ");
+            message.set( scanner.nextLine() );
+        }catch (Exception ex){
+            HelperView.error("Something went wrong!");
         }
     }
 

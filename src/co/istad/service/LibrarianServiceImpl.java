@@ -26,6 +26,16 @@ public class LibrarianServiceImpl implements LibrarianService{
     }
 
     @Override
+    public Category searchCategoryById(Long id) {
+        return librarianDao.searchCategoryById(id);
+    }
+
+    @Override
+    public List<Category> getAllCategories() {
+        return librarianDao.getAllCategories();
+    }
+
+    @Override
     public Book createBook(Book book) {
         return librarianDao.createBook(book);
     }
@@ -42,7 +52,7 @@ public class LibrarianServiceImpl implements LibrarianService{
 
     @Override
     public Boolean returnBook(User user, Book book) {
-        return null;
+        return librarianDao.returnBook( user, book );
     }
 
     @Override
@@ -112,12 +122,12 @@ public class LibrarianServiceImpl implements LibrarianService{
 
     @Override
     public Optional<User> searchUserById(Long id) {
-        return Optional.empty();
+        return librarianDao.searchUserById( id );
     }
 
     @Override
     public Optional<User> searchUserByUsername(String username) {
-        return Optional.empty();
+        return librarianDao.searchUserByUsername(username);
     }
 
     public List<Author> authorPagination( int page, int limit ){
@@ -142,5 +152,35 @@ public class LibrarianServiceImpl implements LibrarianService{
     @Override
     public List<User> getReport(){
         return librarianDao.getReport();
+    }
+
+    @Override
+    public Borrow searchBorrowById(Long id) {
+        return librarianDao.selectBorrowById( id );
+    }
+
+    @Override
+    public List<Borrow> getAllBorrow() {
+        return librarianDao.getAllBorrow();
+    }
+
+    @Override
+    public List<Return> getAllReturn() {
+        return librarianDao.getAllReturn();
+    }
+
+    @Override
+    public List<User> searchUsersByUsername(String username) {
+        return librarianDao.searchUsersByUsername( username );
+    }
+
+    @Override
+    public Boolean addUserToBlacklist(User user, Book book, String message) {
+        return librarianDao.addUserToBlacklist( user, book, message );
+    }
+
+    @Override
+    public Boolean removeUserFromBlacklist(User user, Book book) {
+        return null;
     }
 }
