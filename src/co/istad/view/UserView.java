@@ -22,25 +22,15 @@ public class UserView {
     }
 
     public int userDashboardView(Scanner scanner) {
-        System.out.println("""
-
-                    ██╗   ██╗███████╗███████╗██████╗     ██████╗  █████╗ ███████╗██╗  ██╗██████╗  ██████╗  █████╗ ██████╗ ██████╗    \s
-                    ██║   ██║██╔════╝██╔════╝██╔══██╗    ██╔══██╗██╔══██╗██╔════╝██║  ██║██╔══██╗██╔═══██╗██╔══██╗██╔══██╗██╔══██╗   \s
-                    ██║   ██║███████╗█████╗  ██████╔╝    ██║  ██║███████║███████╗███████║██████╔╝██║   ██║███████║██████╔╝██║  ██║   \s
-                    ██║   ██║╚════██║██╔══╝  ██╔══██╗    ██║  ██║██╔══██║╚════██║██╔══██║██╔══██╗██║   ██║██╔══██║██╔══██╗██║  ██║   \s
-                    ╚██████╔╝███████║███████╗██║  ██║    ██████╔╝██║  ██║███████║██║  ██║██████╔╝╚██████╔╝██║  ██║██║  ██║██████╔╝   \s
-                     ╚═════╝ ╚══════╝╚══════╝╚═╝  ╚═╝    ╚═════╝ ╚═╝  ╚═╝╚══════╝╚═╝  ╚═╝╚═════╝  ╚═════╝ ╚═╝  ╚═╝╚═╝  ╚═╝╚═════╝    \s
-                                                                                                                                     \s
-                """);
         int option = 0;
         try {
-            Table table = new Table(3, BorderStyle.UNICODE_BOX_DOUBLE_BORDER_WIDE, ShownBorders.ALL);
-            table.addCell("     1) Search Book   ");
-            table.addCell("     2) Borrow   ");
-            table.addCell("     3) ViewBorrow   ");
-            table.addCell("     4) Return   ");
-            table.addCell("     5) History   ");
-            table.addCell("     6) Logout   ");
+            Table table = new Table(3, BorderStyle.UNICODE_BOX_DOUBLE_BORDER_WIDE, ShownBorders.SURROUND);
+            table.addCell("     1) Search Book     ");
+            table.addCell("     2) Borrow     ");
+            table.addCell("     3) ViewBorrow     ");
+            table.addCell("     4) Return     ");
+            table.addCell("     5) History     ");
+            table.addCell("     6) Logout     ");
             System.out.println(table.render());
             System.out.println(" ".repeat(50));
             System.out.print("Please choose option : ");

@@ -22,20 +22,9 @@ public class LibrarianView {
     private final Scanner scanner;
     private final LibrarianService librarianService;
 
-    public LibrarianView(){
+    public LibrarianView() {
         scanner = Singleton.scanner();
         librarianService = Singleton.getLibrarianService();
-    }
-    public void welcome(){
-        System.out.println("\n" +
-                "  _      _ _                    _             \n" +
-                " | |    (_) |                  (_)            \n" +
-                " | |     _| |__  _ __ __ _ _ __ _  __ _ _ __  \n" +
-                " | |    | | '_ \\| '__/ _` | '__| |/ _` | '_ \\ \n" +
-                " | |____| | |_) | | | (_| | |  | | (_| | | | |\n" +
-                " |______|_|_.__/|_|  \\__,_|_|  |_|\\__,_|_| |_|\n" +
-                "                                              \n" +
-                "                                              \n");
     }
     public void mainMenu(LibrarianUtil librarianUtil){
         Table table = new Table(2, BorderStyle.UNICODE_BOX_DOUBLE_BORDER_WIDE, ShownBorders.SURROUND);
