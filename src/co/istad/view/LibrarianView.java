@@ -757,10 +757,11 @@ public class LibrarianView {
     public void userMenu(LibrarianUtil librarianUtil){
         Table table = new Table(2, BorderStyle.UNICODE_BOX_DOUBLE_BORDER_WIDE, ShownBorders.SURROUND);
         table.addCell(" ".repeat(5) + "1. List user" + " ".repeat(5));
-        table.addCell(" ".repeat(5) + "2. Search User" + " ".repeat(5));
-        table.addCell(" ".repeat(5) + "3. Add User to blacklist" + " ".repeat(5));
-        table.addCell(" ".repeat(5) + "4. Remove User from blacklist" + " ".repeat(5));
-        table.addCell(" ".repeat(5) + "5. Exit" + " ".repeat(5));
+        table.addCell(" ".repeat(5) + "2. List BlackList User" + " ".repeat(5));
+        table.addCell(" ".repeat(5) + "3. Search User" + " ".repeat(5));
+        table.addCell(" ".repeat(5) + "4. Add User to blacklist" + " ".repeat(5));
+        table.addCell(" ".repeat(5) + "5. Remove User from blacklist" + " ".repeat(5));
+        table.addCell(" ".repeat(5) + "6. Exit" + " ".repeat(5));
         System.out.println();
         System.out.println(table.render());
         System.out.println();
@@ -845,6 +846,98 @@ public class LibrarianView {
             message.set( scanner.nextLine() );
         }catch (Exception ex){
             HelperView.error("Something went wrong!");
+        }
+    }
+    public void removeUserToBlackListView(User user, Book book){
+        try{
+            //Enter User Id
+            System.out.print("\t-->Enter user id : ");
+            user.setId( Long.parseLong( scanner.nextLine() ) );
+            Optional<User> us = librarianService.searchUserById(user.getId() );
+            if( us.isPresent() ){
+                List<User> users = new ArrayList<>();
+                users.add( us.get() );
+                userView(users, 1,1,1, false);
+            }else{
+                HelperView.error(String.format("User id(%s) not exist", user.getId()));
+                return;
+            }
+            //Enter Book Id
+            System.out.print("\t-->Enter book id : ");
+            book.setId( Long.parseLong( scanner.nextLine() ) );
+            Optional<Book> bk = librarianService.searchBookById(book.getId() );
+            if( bk.isPresent() ){
+                List<Book> books = new ArrayList<>();
+                books.add( bk.get() );
+                bookView(books, 1,1,1, false);
+            }else{
+                HelperView.error(String.format("Book id(%s) not exist", book.getId()));
+                return;
+            }
+        }catch (Exception ex){
+            HelperView.error("Something went wrong!");
+        }
+    }
+
+    public void userBlackListView( List<BlackList> blackLists, int currentPage, int totalPage, int limit, boolean display ){
+        if (blackLists == null || blackLists.isEmpty()){
+            Table table = new Table(1, BorderStyle.UNICODE_BOX_DOUBLE_BORDER_WIDE, ShownBorders.ALL);
+            table.addCell("No User In BlackList Yet!", new CellStyle(CellStyle.HorizontalAlign.CENTER));
+            System.out.println();
+            System.out.println(table.render());
+            System.out.println();
+        }else{
+            Table table = new Table(7, BorderStyle.UNICODE_BOX_DOUBLE_BORDER_WIDE, ShownBorders.ALL);
+            table.addCell(" ".repeat(5) + "Id" + " ".repeat(5));
+            table.addCell(" ".repeat(5) + "Title" + " ".repeat(5));
+            table.addCell(" ".repeat(5) + "Username" + " ".repeat(5));
+            table.addCell(" ".repeat(5) + "Email" + " ".repeat(5));
+            table.addCell(" ".repeat(5) + "Quantity" + " ".repeat(5));
+            table.addCell(" ".repeat(5) + "Message" + " ".repeat(5));
+            table.addCell(" ".repeat(5) + "Created At" + " ".repeat(5));
+            blackLists.forEach(blackList -> {
+                table.addCell(blackList.getId().toString(), new CellStyle(CellStyle.HorizontalAlign.CENTER));
+                table.addCell(blackList.getBook().getTitle(), new CellStyle(CellStyle.HorizontalAlign.CENTER));
+                table.addCell(blackList.getUser().getUsername(), new CellStyle(CellStyle.HorizontalAlign.CENTER));
+                table.addCell(blackList.getUser().getEmail(), new CellStyle(CellStyle.HorizontalAlign.CENTER));
+                table.addCell(blackList.getQuantity().toString(), new CellStyle(CellStyle.HorizontalAlign.CENTER));
+                table.addCell(blackList.getMessage(), new CellStyle(CellStyle.HorizontalAlign.CENTER));
+                table.addCell( blackList.getDate().toString() , new CellStyle(CellStyle.HorizontalAlign.CENTER));
+            });
+            System.out.println(table.render());
+        }
+        if( display ){
+            Table table = new Table( 2, BorderStyle.UNICODE_BOX_DOUBLE_BORDER_WIDE, ShownBorders.ALL );
+            table.addCell( " ".repeat(5) + "Current Page" + " ".repeat(5) );
+            table.addCell( " ".repeat(5) + currentPage + " ".repeat(5) );
+            table.addCell( " ".repeat(5) + "Total Of Page" + " ".repeat(5) );
+            table.addCell( " ".repeat(5) + totalPage + " ".repeat(5) );
+            table.addCell( " ".repeat(5) + "Limit Display" + " ".repeat(5) );
+            table.addCell( " ".repeat(5) + limit + " ".repeat(5) );
+            System.out.println();
+            System.out.println(table.render());
+            System.out.println();
+        }
+    }
+
+    public void categoryMenu(LibrarianUtil librarianUtil){
+        Table table = new Table(2, BorderStyle.UNICODE_BOX_DOUBLE_BORDER_WIDE, ShownBorders.SURROUND);
+        table.addCell(" ".repeat(5) + "1. List Category" + " ".repeat(5));
+        table.addCell(" ".repeat(5) + "2. Add Category" + " ".repeat(5));
+        table.addCell(" ".repeat(5) + "3. Search Category" + " ".repeat(5));
+        table.addCell(" ".repeat(5) + "4. Update Category" + " ".repeat(5));
+        table.addCell(" ".repeat(5) + "5. Delete Category" + " ".repeat(5));
+        table.addCell(" ".repeat(5) + "6. Exit" + " ".repeat(5));
+        System.out.println();
+        System.out.println(table.render());
+        System.out.println();
+        System.out.print("\t-->Enter your option : ");
+        try{
+            librarianUtil.setOption( Integer.parseInt(scanner.nextLine()) );
+        }
+        catch (NumberFormatException ex){
+            System.err.println(ex.getMessage());
+            librarianUtil.setOption(0);
         }
     }
 

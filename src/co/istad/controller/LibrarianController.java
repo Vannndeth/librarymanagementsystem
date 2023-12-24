@@ -128,6 +128,7 @@ public class LibrarianController {
                 }
                 case 6 -> {
                     //Category
+                    categoryPage();
                 }
                 case 7 -> {
                     //Logout
@@ -668,12 +669,145 @@ public class LibrarianController {
             switch (librarianUtil.getOption()){
                 case 1 ->{
                     //Lists all user
+                    int totalPage = librarianService.getAllUser(1, 1000).size();
+                    Pagination pagination = new Pagination(1,1 , 3 );
+                    do{
+                        pagination.setTotalPage( (int)Math.ceil(( totalPage / (float)pagination.getLimit() ))  );
+                        librarianView.userView(
+                                librarianService.getAllUser( pagination.getCurrentPage(), pagination.getLimit() ),
+                                pagination.getCurrentPage(),
+                                pagination.getTotalPage(),
+                                (pagination.getLimit()),
+                                true
+                        );
+                        librarianView.showBookMenu( librarianUtil );
+                        switch ( librarianUtil.getOption() ){
+                            case 1 -> {
+                                //Next
+                                pagination.setCurrentPage( pagination.getCurrentPage() + 1 );
+                                if( pagination.getCurrentPage() > pagination.getTotalPage() ){
+                                    pagination.setCurrentPage(pagination.getTotalPage() );
+                                }
+                            }
+                            case 2 -> {
+                                //Previous
+                                pagination.setCurrentPage( pagination.getCurrentPage() - 1 );
+                                if( pagination.getCurrentPage() < 1){
+                                    pagination.setCurrentPage( 1 );
+                                }
+                            }
+                            case 3 -> {
+                                //Goto
+                                try{
+                                    System.out.print("\t-->Enter Page You're Want To Go : ");
+                                    pagination.setCurrentPage( Integer.parseInt(scanner.nextLine()) );
+                                    if( pagination.getCurrentPage() > pagination.getTotalPage() ){
+                                        pagination.setCurrentPage(pagination.getTotalPage() );
+                                    }
+                                }catch (Exception ex){
+                                    pagination.setCurrentPage( pagination.getCurrentPage() );
+                                }
+                            }
+                            case 4 -> {
+                                //First
+                                pagination.setCurrentPage( 1 );
+                            }
+                            case 5 -> {
+                                //Last
+                                pagination.setCurrentPage( pagination.getTotalPage() );
+                            }
+                            case 6 -> {
+                                // Set Limit
+                                AtomicInteger limit = new AtomicInteger();
+                                librarianView.setLimitView( limit );
+                                pagination.setLimit( limit.get() );
+                            }
+                            case 7 -> {
+                                //Report Book
+
+                            }
+                            case 8 -> {
+                                return;
+                            }
+                            default -> {
+                                HelperView.error("Enter number above menu!");
+                            }
+                        }
+                    }while (true);
                 }
                 case 2 ->{
+                    //List All BlackList User
+                    int totalPage = librarianService.getBlackListUser( 1, 1000 ).size();
+                    Pagination pagination = new Pagination(1,1 , 3 );
+                    do{
+                        pagination.setTotalPage( (int)Math.ceil(( totalPage / (float)pagination.getLimit() ))  );
+                        librarianView.userBlackListView(
+                                librarianService.getBlackListUser( pagination.getCurrentPage(), pagination.getLimit() ),
+                                pagination.getCurrentPage(),
+                                pagination.getTotalPage(),
+                                (pagination.getLimit()),
+                                true
+                        );
+                        librarianView.showBookMenu( librarianUtil );
+                        switch ( librarianUtil.getOption() ){
+                            case 1 -> {
+                                //Next
+                                pagination.setCurrentPage( pagination.getCurrentPage() + 1 );
+                                if( pagination.getCurrentPage() > pagination.getTotalPage() ){
+                                    pagination.setCurrentPage(pagination.getTotalPage() );
+                                }
+                            }
+                            case 2 -> {
+                                //Previous
+                                pagination.setCurrentPage( pagination.getCurrentPage() - 1 );
+                                if( pagination.getCurrentPage() < 1){
+                                    pagination.setCurrentPage( 1 );
+                                }
+                            }
+                            case 3 -> {
+                                //Goto
+                                try{
+                                    System.out.print("\t-->Enter Page You're Want To Go : ");
+                                    pagination.setCurrentPage( Integer.parseInt(scanner.nextLine()) );
+                                    if( pagination.getCurrentPage() > pagination.getTotalPage() ){
+                                        pagination.setCurrentPage(pagination.getTotalPage() );
+                                    }
+                                }catch (Exception ex){
+                                    pagination.setCurrentPage( pagination.getCurrentPage() );
+                                }
+                            }
+                            case 4 -> {
+                                //First
+                                pagination.setCurrentPage( 1 );
+                            }
+                            case 5 -> {
+                                //Last
+                                pagination.setCurrentPage( pagination.getTotalPage() );
+                            }
+                            case 6 -> {
+                                // Set Limit
+                                AtomicInteger limit = new AtomicInteger();
+                                librarianView.setLimitView( limit );
+                                pagination.setLimit( limit.get() );
+                            }
+                            case 7 -> {
+                                //Report Book
+
+                            }
+                            case 8 -> {
+                                return;
+                            }
+                            default -> {
+                                HelperView.error("Enter number above menu!");
+                            }
+                        }
+                    }while (true);
+                }
+                case 3 ->{
                     //Search User
                     userSearchPage();
                 }
-                case 3 ->{
+                case 4 ->{
                     //Add User To Blacklist
                     User user = new User();
                     Book book = new Book();
@@ -699,10 +833,32 @@ public class LibrarianController {
                         }
                     }
                 }
-                case 4 ->{
-                    //Remove User from Blacklist
-                }
                 case 5 ->{
+                    //Remove User from Blacklist
+                    User user = new User();
+                    Book book = new Book();
+                    librarianView.removeUserToBlackListView( user, book );
+                    if(
+                            user.getId() != null ||
+                                    book.getQuantity() != null ||
+                                    book.getId() == null
+                    ){
+                        System.out.print("Are you sure? press y(es or c)ancel : ");
+                        Character op = scanner.nextLine().charAt(0);
+                        switch ( op.toString().toLowerCase() ){
+                            case "y"->{
+                                //Yes
+                                if( librarianService.removeUserFromBlacklist(user, book) ){
+                                    HelperView.message("Remove Successfully!");
+                                }
+                            }
+                            default -> {
+                                HelperView.error("Cancel");
+                            }
+                        }
+                    }
+                }
+                case 6 ->{
                     //Exit
                     return;
                 }
@@ -744,6 +900,36 @@ public class LibrarianController {
                     }
                 }
                 case 3 -> {
+                    //Exit
+                    return;
+                }
+                default -> HelperView.error("Please enter above number of list");
+            }
+        }
+    }
+
+    private void categoryPage() {
+        LibrarianUtil librarianUtil = new LibrarianUtil();
+        while (true) {
+            librarianView.categoryMenu(librarianUtil);
+            switch (librarianUtil.getOption()) {
+                case 1 -> {
+                    //List Category
+
+                }
+                case 2 -> {
+                    //Added
+                }
+                case 3 -> {
+                    //Search Category
+                }
+                case 4 -> {
+                    //Update
+                }
+                case 5 -> {
+                    //delete
+                }
+                case 6 -> {
                     //Exit
                     return;
                 }

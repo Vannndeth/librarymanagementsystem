@@ -181,6 +181,17 @@ public class LibrarianServiceImpl implements LibrarianService{
 
     @Override
     public Boolean removeUserFromBlacklist(User user, Book book) {
-        return null;
+        return librarianDao.removeUserFromBlacklist(user, book);
     }
+
+    @Override
+    public List<BlackList> getBlackListUser(int page, int limit){
+       return librarianDao.getBlackListUser(page , limit);
+    }
+
+    @Override
+    public List<User> getAllUser(int page, int limit){
+        return librarianDao.getAllUser( page, limit );
+    }
+
 }

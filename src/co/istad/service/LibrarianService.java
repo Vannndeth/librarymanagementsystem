@@ -32,5 +32,8 @@ public interface LibrarianService extends MainFeatureService {
     public List<User> searchUsersByUsername(String username);
     public Boolean addUserToBlacklist( User user, Book book, String message );
     public Boolean removeUserFromBlacklist( User user, Book book );
+    public List<BlackList> getBlackListUser(int page, int limit);
+    public List<User> getAllUser(int page, int limit);
+
 
 }

@@ -1054,18 +1054,13 @@ public class LibrarianDaoImpl implements LibrarianDao {
                 INSERT INTO blacklists( user_id, book_id, quantity, message, status )
                 VALUES(?, ?, ?, ?, ?);
                 """;
-        String updateBookQuery = """
-                UPDATE books
-                SET quantity = quantity + ?
-                WHERE id = ?;
-                """;
         String borrowQuery = """
                 SELECT * FROM borrow
-                WHERE user_id = ? AND book_id = ? AND is_borrow = true;
+                WHERE user_id = ? AND book_id = ? AND is_borrow = true AND is_return = false;
                 """;
         try(
             PreparedStatement preparedStatement = this.connection.prepareStatement(query);
-            PreparedStatement updateBookPrepareStatement = this.connection.prepareStatement(updateBookQuery);
+//            PreparedStatement updateBookPrepareStatement = this.connection.prepareStatement(updateBookQuery);
             PreparedStatement borrowPrepareStatement = this.connection.prepareStatement(borrowQuery);
         ){
             this.connection.setAutoCommit(false);
@@ -1093,9 +1088,11 @@ public class LibrarianDaoImpl implements LibrarianDao {
             preparedStatement.executeUpdate();
 
             if( book.getQuantity() > 0 ){
-                updateBookPrepareStatement.setInt(1, book.getQuantity());
-                updateBookPrepareStatement.setLong(2, book.getQuantity());
-                updateBookPrepareStatement.executeUpdate();
+                Boolean b = returnBook(user, book);
+                if( !b ){
+                    HelperView.error("Returned failed!");
+                    return false;
+                }
             }
 
             this.connection.commit();
@@ -1116,6 +1113,109 @@ public class LibrarianDaoImpl implements LibrarianDao {
 
     @Override
     public Boolean removeUserFromBlacklist(User user, Book book) {
-        return null;
+        String blackListQuery = """
+                SELECT * FROM blacklists
+                WHERE user_id = ? AND book_id = ?;
+                """;
+        String deleteBlackListQuery = """
+                DELETE FROM blacklists
+                WHERE user_id = ? AND book_id = ?;
+                """;
+        try(
+            PreparedStatement preparedStatement = this.connection.prepareStatement( blackListQuery );
+            PreparedStatement daleteBlackListPrepareStatement = this.connection.prepareStatement(deleteBlackListQuery)
+        ){
+            //Added Data
+            preparedStatement.setLong(1, user.getId());
+            preparedStatement.setLong(2, book.getId());
+
+            ResultSet resultSet = preparedStatement.executeQuery();
+            Boolean isPresent = false;
+            while (resultSet.next()){
+                isPresent = true;
+            }
+
+            if( isPresent ){
+                daleteBlackListPrepareStatement.setLong(1, user.getId());
+                daleteBlackListPrepareStatement.setLong(2, book.getId());
+                daleteBlackListPrepareStatement.executeUpdate();
+                return true;
+            }else{
+                HelperView.error("This user without in blacklist");
+                return false;
+            }
+
+
+        }catch(Exception ex){
+            HelperView.error( ex.getMessage() );
+            return false;
+        }
+    }
+
+    public List<BlackList> getBlackListUser( int page, int limit ){
+        List<BlackList> blackLists = new ArrayList<>();
+        String query = """
+                SELECT
+                	bl.*,
+                	us.username,
+                	us.email,
+                	bk.title
+                FROM blacklists bl
+                INNER JOIN users us ON us.id = bl.user_id
+                INNER JOIn books bk ON bk.id = bl.book_id
+                """;
+        try(PreparedStatement preparedStatement = this.connection.prepareStatement(query)){
+            ResultSet resultSet = preparedStatement.executeQuery();
+            while (resultSet.next()){
+                BlackList blackList = new BlackList();
+                User user = new User();
+                Book book = new Book();
+                blackList.setId( resultSet.getLong("id") );
+                blackList.setQuantity( resultSet.getInt("quantity") );
+                blackList.setMessage( resultSet.getString("message") );
+                blackList.setStatus( resultSet.getBoolean("status") );
+                blackList.setDate( resultSet.getDate("created_at").toLocalDate() );
+                //user
+                user.setId( resultSet.getLong("user_id") );
+                user.setUsername( resultSet.getString("username") );
+                user.setEmail( resultSet.getString("email") );
+                blackList.setUser( user  );
+                //Book
+                book.setId( resultSet.getLong("book_id") );
+                book.setTitle( resultSet.getString("title") );
+                blackList.setBook( book );
+                blackLists.add( blackList );
+            }
+        }
+        catch (Exception ex){
+            HelperView.error(ex.getMessage());
+        }
+        return blackLists;
+    }
+
+    @Override
+    public List<User> getAllUser(int page, int limit) {
+        String query = """
+                SELECT * FROM users
+                LIMIT ?
+                OFFSET ?;
+                """;
+        List<User> users = new ArrayList<>();
+        try( PreparedStatement preparedStatement = this.connection.prepareStatement( query ) ){
+            preparedStatement.setInt( 1, limit );
+            preparedStatement.setInt( 2, ( page - 1 ) * limit );
+            ResultSet resultSet = preparedStatement.executeQuery();
+            while ( resultSet.next() ){
+                User user = new User();
+                user.setId(resultSet.getLong("id"));
+                user.setUsername(resultSet.getString("username"));
+                user.setEmail(resultSet.getString("email"));
+                user.setDisable( resultSet.getBoolean("is_disable") );
+                users.add(user);
+            }
+        }catch (Exception ex){
+            HelperView.error( ex.getMessage() );
+        }
+        return users;
     }
 }
