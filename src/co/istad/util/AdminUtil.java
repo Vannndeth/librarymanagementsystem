@@ -4,10 +4,14 @@ import co.istad.connection.ConnectionDb;
 import co.istad.model.Role;
 import co.istad.model.User;
 
+import javax.swing.*;
+import java.io.File;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 import java.util.concurrent.atomic.AtomicInteger;
 
@@ -53,5 +57,43 @@ public class AdminUtil {
             throw new RuntimeException(e);
         }
         return userResponse;
+    }
+
+    public void removeBKP(){
+        List<String> list = new ArrayList<>(9);
+        String dir = "/Users/vanndeth/Desktop/Backup";
+        File directory = new File(dir);
+        File fList[] = directory.listFiles();
+        if(fList.length != 0 && fList.length > 8){
+            for (int i = 0; i < fList.length; i++){
+                list.add(fList[i].getName());
+            }
+
+            String x = Collections.min(list);
+            list.remove(Collections.max(list));
+
+            String name = "/Users/vanndeth/Desktop/Backup" + x;
+            File f = new File(name);
+            f.delete();
+
+            int m = 0;
+            String recebe;
+            String result;
+            while (m < list.size()){
+                recebe = list.get(m);
+                result = recebe.replace(" ", " ".substring(1));
+
+                m++;
+                result = m + result;
+                File file = new File("/Users/vanndeth/Desktop/Backup" + recebe);
+                File file2 = new File("/Users/vanndeth/Desktop/Backup" + result);
+
+                boolean success = file.renameTo(file2);
+                if (!success){
+                    JOptionPane.showMessageDialog(null, "No");
+
+                }
+            }
+        }
     }
 }

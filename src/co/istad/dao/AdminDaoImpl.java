@@ -8,10 +8,16 @@ import co.istad.util.PasswordEncoder;
 import co.istad.util.Singleton;
 import co.istad.view.HelperView;
 
+import javax.swing.*;
+import java.io.BufferedReader;
+import java.io.File;
+import java.io.IOException;
+import java.io.InputStreamReader;
 import java.sql.*;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Optional;
+import java.text.DateFormat;
+import java.text.SimpleDateFormat;
+import java.util.*;
+import java.util.Date;
 
 public class AdminDaoImpl implements AdminDao {
 
@@ -21,14 +27,51 @@ public class AdminDaoImpl implements AdminDao {
         connection = ConnectionDb.getConnection();
         adminUtil = Singleton.getAdminUtil();
     }
-    @Override
     public void backup() {
+        try {
+            String command = "pg_dump -U postgres -f /Users/vanndeth/Desktop/Backup/dbcstadlibrary.sql dbcstadlibrary";
+            Process process = Runtime.getRuntime().exec(command);
+            int processComplete = process.waitFor();
 
+            if (processComplete == 0) {
+//                JOptionPane.showMessageDialog(null, "backup");
+                System.out.println("Backup created successfully...!");
+            } else {
+                System.out.println("Backup creation failed...!");
+            }
+        } catch (IOException | InterruptedException e) {
+            e.printStackTrace();
+        }
     }
 
     @Override
     public void restore() {
+        try {
+//            String command = "pg_restore -h localhost -p 5432 -U postgres -d dbcstadlibrary -w -c /Users/vanndeth/Desktop/Restore/dbcstadlibrary.sql";
+            String[] command = {
+                    "/Library/PostgreSQL/16/bin/pg_restore",
+                    "--host", "localhost",
+                    "--port", "5432",
+                    "--username", "postgres",
+                    "--dbname", "dbcstadlibrary",
+                    "--role", "postgres",
+                    "--no-password",
+                    "--verbose",
+                    "/Users/vanndeth/Desktop/Backup/dbcstadlibrary.sql"
+            };
 
+            Process process = Runtime.getRuntime().exec(command);
+            int processComplete = process.waitFor();
+
+            if (processComplete == 0) {
+                JOptionPane.showMessageDialog(null, "Restore");
+                System.out.println("Restore successfully...!");
+            } else {
+                System.out.println("Restore failed");
+            }
+        } catch (IOException | InterruptedException e) {
+            e.printStackTrace();
+        }
     }
 
     @Override
