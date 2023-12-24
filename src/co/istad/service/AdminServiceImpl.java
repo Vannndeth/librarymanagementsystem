@@ -1,6 +1,7 @@
 package co.istad.service;
 
 import co.istad.dao.AdminDao;
+import co.istad.dao.LibrarianDao;
 import co.istad.model.Book;
 import co.istad.model.User;
 import co.istad.storage.Storage;
@@ -18,19 +19,21 @@ public class AdminServiceImpl implements AdminService{
     private final AdminDao adminDao;
     private final Scanner scanner;
     private final Storage storage;
+    private final LibrarianDao librarianDao;
     public AdminServiceImpl(){
         adminDao = Singleton.getAdminDaoImpl();
         scanner = Singleton.scanner();
         storage = Singleton.getStorage();
+        librarianDao = Singleton.getLibrarianDao();
     }
     @Override
     public void backUp() {
-
+        adminDao.backup();
     }
 
     @Override
     public void restore() {
-
+        adminDao.restore();
     }
 
     @Override
@@ -70,7 +73,7 @@ public class AdminServiceImpl implements AdminService{
 
     @Override
     public void getReport() {
-
+        librarianDao.getReport();
     }
 
     @Override

@@ -265,13 +265,14 @@ public class AdminController {
 
     }
     public void backup(){
+        adminService.backUp();
 
     }
     public void restore(){
-
+        adminService.restore();
     }
     public void viewReport(){
-
+        adminService.getReport();
     }
 
     public int first(List<User> users, int rowPerPage, int currentPage) {
