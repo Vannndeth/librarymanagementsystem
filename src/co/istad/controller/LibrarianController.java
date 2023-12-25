@@ -26,6 +26,7 @@ import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
+import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
@@ -76,7 +77,6 @@ public class LibrarianController {
                         org.apache.logging.log4j.Logger logger = org.apache.logging.log4j.LogManager.getLogger(LibrarianController.class);
                         XSSFWorkbook xssfWorkbook = new XSSFWorkbook();
                         XSSFSheet sheet = xssfWorkbook.createSheet("sheet1");
-                        System.out.println( librarianService.getReport().size() );
                         librarianView.reportView( librarianService.getReport(), 1,1,1, false );
                         int rownum = 0;
                         for (User user : librarianService.getReport()) {
@@ -117,10 +117,14 @@ public class LibrarianController {
                             Row row = sheet.createRow(rownum++);
                             createUserReport(user, row);
                         }
-                        FileOutputStream out = new FileOutputStream(new File("/home/sunlyhuor/dir/test.xlsx"));
+//                        FileOutputStream out = new FileOutputStream(new File("/home/sunlyhuor/dir/test.xlsx"));
+                        FileOutputStream out = null;
+                        String home = System.getProperty("user.home");
+                        File file = new File(home+"/Downloads/" + LocalDate.now().toString() + " - user_report.xlsx");
+                        out = new FileOutputStream(new File(file.getPath()));
                         xssfWorkbook.write(out);
                         out.close();
-                        HelperView.message("Generated Successfully");
+                        HelperView.message("Generated Report Successfully");
                     } catch (IOException e) {
                         HelperView.error(e.getMessage());
                         return;

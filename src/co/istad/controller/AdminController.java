@@ -3,20 +3,32 @@ package co.istad.controller;
 import co.istad.model.Book;
 import co.istad.model.User;
 import co.istad.service.AdminService;
+import co.istad.service.LibrarianService;
 import co.istad.service.LoginService;
 import co.istad.storage.Storage;
 import co.istad.util.Singleton;
 import co.istad.view.AdminView;
 import co.istad.view.HelperView;
 import co.istad.view.HomepageView;
+import co.istad.view.LibrarianView;
+import org.apache.logging.log4j.simple.SimpleLoggerContextFactory;
+import org.apache.poi.ss.usermodel.Cell;
+import org.apache.poi.ss.usermodel.Row;
+import org.apache.poi.xssf.usermodel.XSSFSheet;
+import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 
+import java.io.File;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Scanner;
 import java.util.concurrent.atomic.AtomicInteger;
 
 public class AdminController {
-
+    private final LibrarianView librarianView;
+    private final LibrarianService librarianService;
     private final Scanner scanner;
     private final Storage storage;
     private final AdminService adminService;
@@ -30,6 +42,8 @@ public class AdminController {
         adminView = Singleton.getAdminView();
         loginService = Singleton.getLoginService();
         homepageView = Singleton.getHomepageView();
+        librarianView = Singleton.getLibrarianView();
+        librarianService = Singleton.getLibrarianService();
     }
     public void adminDashboard(){
         HelperView.welcome("=".repeat(115));
@@ -262,7 +276,63 @@ public class AdminController {
         adminView.usersView(adminService.getLibrarianAndUser());
     }
     public void saveReportExcel(){
+        System.setProperty("log4j2.loggerContextFactory", SimpleLoggerContextFactory.class.getName());
+        try {
+            // Your code
+            org.apache.logging.log4j.Logger logger = org.apache.logging.log4j.LogManager.getLogger(LibrarianController.class);
+            XSSFWorkbook xssfWorkbook = new XSSFWorkbook();
+            XSSFSheet sheet = xssfWorkbook.createSheet("sheet1");
+            librarianView.reportView( librarianService.getReport(), 1,1,1, false );
+            int rownum = 0;
+            for (User user : librarianService.getReport()) {
+                if( rownum == 0 ){
+                    Row row = sheet.createRow(rownum++);
+                    //User Id
+                    Cell cell = row.createCell(0);
+                    cell.setCellValue("Id");
 
+                    //User Name
+                    cell = row.createCell(1);
+                    cell.setCellValue("Username");
+
+                    //User Email
+                    cell = row.createCell(2);
+                    cell.setCellValue("Email");
+
+                    //Book Title
+                    cell = row.createCell(3);
+                    cell.setCellValue("Book Title");
+
+                    //Borrow
+                    cell = row.createCell(4);
+                    cell.setCellValue("Borrow");
+
+                    //Return
+                    cell = row.createCell(5);
+                    cell.setCellValue("Return");
+
+                    //Borrow At
+                    cell = row.createCell(6);
+                    cell.setCellValue("Borrow At");
+
+                    //DeadLine Date
+                    cell = row.createCell(7);
+                    cell.setCellValue( "Deadline" );
+                }
+                Row row = sheet.createRow(rownum++);
+                createUserReport(user, row);
+            }
+            FileOutputStream out = null;
+            String home = System.getProperty("user.home");
+            File file = new File(home+"/Downloads/" + LocalDate.now().toString() + " - user_report.xlsx");
+            out = new FileOutputStream(new File(file.getPath()));
+            xssfWorkbook.write(out);
+            out.close();
+            HelperView.message("Generated Report Successfully");
+        } catch (Exception e) {
+            HelperView.error(e.getMessage());
+            return;
+        }
     }
     public void backup(){
         adminService.backUp();
@@ -272,7 +342,8 @@ public class AdminController {
         adminService.restore();
     }
     public void viewReport(){
-        adminService.getReport();
+            // Your code
+        librarianView.reportView(librarianService.getReport(), 1,1,1,false);
     }
 
     public int first(List<User> users, int rowPerPage, int currentPage) {
@@ -374,6 +445,40 @@ public class AdminController {
         HelperView.message(String.format("    Set page to %d record successfully...!    ",record));
         return record;
     }
+    private static void createUserReport(User user, Row row) {
+        //User Id
+        Cell cell = row.createCell(0);
+        cell.setCellValue(user.getId());
+
+        //User Name
+        cell = row.createCell(1);
+        cell.setCellValue( user.getUsername() );
+
+        //User Email
+        cell = row.createCell(2);
+        cell.setCellValue( user.getEmail() );
+
+        //Book Title
+        cell = row.createCell(3);
+        cell.setCellValue( user.getBorrow().getBook().getTitle() );
+
+        //Borrow
+        cell = row.createCell( 4 );
+        cell.setCellValue( user.getBorrow().isBorrow() ? "Borrow" : "Not Confirm Yet" );
+
+        //Return
+        cell = row.createCell(5);
+        cell.setCellValue( user.getBorrow().isReturn() ? "Return" : "Not Return Yet" );
+
+        //Borrow At
+        cell = row.createCell(6);
+        cell.setCellValue( user.getBorrow().getBorrowDate().toString() );
+
+        //Deadline
+        cell = row.createCell(7);
+        cell.setCellValue( user.getBorrow().getDeadlineBorrowDate().toString() );
+    }
+
 }
 
 
