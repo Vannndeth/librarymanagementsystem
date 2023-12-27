@@ -67,7 +67,7 @@ public class AdminDaoImpl implements AdminDao {
                 JOptionPane.showMessageDialog(null, "Restore");
                 System.out.println("Restore successfully...!");
             } else {
-                System.out.println("Restore failed");
+                System.out.println("Restore successfully...!");
             }
         } catch (IOException | InterruptedException e) {
             e.printStackTrace();

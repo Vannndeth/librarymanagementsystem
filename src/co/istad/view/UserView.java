@@ -5,6 +5,7 @@ import co.istad.model.Borrow;
 import co.istad.service.UserServiceImpl;
 import co.istad.util.Singleton;
 import org.nocrala.tools.texttablefmt.BorderStyle;
+import org.nocrala.tools.texttablefmt.CellStyle;
 import org.nocrala.tools.texttablefmt.ShownBorders;
 import org.nocrala.tools.texttablefmt.Table;
 
@@ -58,22 +59,28 @@ public class UserView {
     }
 
     public void dashboardOverview() {
+        System.out.println();
+        HelperView.welcome("=".repeat(117));
+        HelperView.welcome(" ".repeat(55) + "Welcome");
+        HelperView.welcome("=".repeat(118));
+        System.out.println(" ".repeat(45)+"Here are books in library");
+
         List<Book> data =  userService.getAllBook();
         Table table = new Table(6, BorderStyle.UNICODE_BOX_DOUBLE_BORDER_WIDE, ShownBorders.ALL);
-        table.addCell("Category ID");
-        table.addCell("Title");
-        table.addCell("Author");
-        table.addCell("Description");
-        table.addCell("Category");
-        table.addCell("Stock");
+        table.addCell("   Category ID   ");
+        table.addCell("      Title   ");
+        table.addCell("     Author   ");
+        table.addCell("   Description   ");
+        table.addCell("   Category   ");
+        table.addCell("      Stock   ");
         for (Book books : data) {
             if (books.getQuantity() > 0) {
-                table.addCell(books.getId().toString());
-                table.addCell(books.getTitle());
-                table.addCell(books.getAuthor().getFirstName() + books.getAuthor().getLastName());
-                table.addCell(books.getDescription());
-                table.addCell(books.getBookDetail().getCategory().getName());
-                table.addCell("Book Still Avaibile ");
+                table.addCell(books.getId().toString(), new CellStyle(CellStyle.HorizontalAlign.CENTER));
+                table.addCell(books.getTitle(), new CellStyle(CellStyle.HorizontalAlign.CENTER));
+                table.addCell(books.getAuthor().getFirstName() + books.getAuthor().getLastName(), new CellStyle(CellStyle.HorizontalAlign.CENTER));
+                table.addCell(books.getDescription(), new CellStyle(CellStyle.HorizontalAlign.CENTER));
+                table.addCell(books.getBookDetail().getCategory().getName(), new CellStyle(CellStyle.HorizontalAlign.CENTER));
+                table.addCell("Book Still Avaibile", new CellStyle(CellStyle.HorizontalAlign.CENTER));
             }
         }
         System.out.println(table.render());

@@ -42,7 +42,7 @@ public class LoginController {
             homepageView.login(user, scanner);
             loginService.login(user);
             if (storage.getId() == null) {
-                System.out.println("Invalid ID. Please try again.");
+                System.out.println("Please sign up first...!");
                 continue login;
             } else {
                 switch (RoleEnum.valueOf(storage.getRole().getRole().name())) {
